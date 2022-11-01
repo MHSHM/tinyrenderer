@@ -7,12 +7,11 @@ namespace tiny
     struct Line 
     {
         int x0, y0, x1, y1;
-        TGAColor color;
     };
 
     Line
-    line_new(int x0, int y0, int x1, int y1, TGAColor color);
+    line_new(int x0, int y0, int x1, int y1);
 
     void
-    line_draw(const Line& line, TGAImage& image);
+    line_draw(const Line& line, TGAImage& image, TGAColor color);
 };

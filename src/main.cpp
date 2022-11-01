@@ -1,5 +1,5 @@
 #include "tgaimage.h"
-#include "line.h"
+#include "triangle.h"
 #include "objloader.h"
 
 static const TGAColor white   = TGAColor(255, 255, 255, 255);
@@ -22,25 +22,20 @@ int main()
     {
         const std::vector<objl::Vertex>& vertices = loader.LoadedVertices;
 
-        objl::Vector3 v0 = vertices[loader.LoadedIndices[i]].Position;
-        objl::Vector3 v1 = vertices[loader.LoadedIndices[i + 1]].Position;
-        objl::Vector3 v2 = vertices[loader.LoadedIndices[i + 2]].Position;
+        mathy::Vector3<float> v0 = mathy::Vector3<float>::vec3_new(vertices[loader.LoadedIndices[i]].Position.X, vertices[loader.LoadedIndices[i]].Position.Y, vertices[loader.LoadedIndices[i]].Position.Z);
+        mathy::Vector3<float> v1 = mathy::Vector3<float>::vec3_new(vertices[loader.LoadedIndices[i + 1]].Position.X, vertices[loader.LoadedIndices[i + 1]].Position.Y, vertices[loader.LoadedIndices[i + 1]].Position.Z);;
+        mathy::Vector3<float> v2 = mathy::Vector3<float>::vec3_new(vertices[loader.LoadedIndices[i + 2]].Position.X, vertices[loader.LoadedIndices[i + 2]].Position.Y, vertices[loader.LoadedIndices[i + 2]].Position.Z);;
 
-        v0.X = v0.X * (width / 2.0) + (width / 2.0);
-        v1.X = v1.X * (width / 2.0) + (width / 2.0);
-        v2.X = v2.X * (width / 2.0) + (width / 2.0);
+        v0.x = v0.x * (width / 2.0) + (width / 2.0);
+        v1.x = v1.x * (width / 2.0) + (width / 2.0);
+        v2.x = v2.x * (width / 2.0) + (width / 2.0);
 
-        v0.Y = v0.Y * (height / 2.0) + (height / 2.0);
-        v1.Y = v1.Y * (height / 2.0) + (height / 2.0);
-        v2.Y = v2.Y * (height / 2.0) + (height / 2.0);
+        v0.y = v0.y * (height / 2.0) + (height / 2.0);
+        v1.y = v1.y * (height / 2.0) + (height / 2.0);
+        v2.y = v2.y * (height / 2.0) + (height / 2.0);
 
-        tiny::Line line0 = tiny::line_new((int)v0.X, (int)v0.Y, (int)v1.X, (int)v1.Y, white);
-        tiny::Line line1 = tiny::line_new((int)v0.X, (int)v0.Y, (int)v2.X, (int)v2.Y, white);
-        tiny::Line line2 = tiny::line_new((int)v1.X, (int)v1.Y, (int)v2.X, (int)v2.Y, white);
-
-        tiny::line_draw(line0, image);
-        tiny::line_draw(line1, image);
-        tiny::line_draw(line2, image);
+        tiny::Triangle triangle = tiny::triangle_new(v0, v1, v2);
+        tiny::triangle_draw_fill(triangle, image, white);
     }
 
     image.write_tga_file("output.tga");

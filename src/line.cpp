@@ -3,19 +3,18 @@
 namespace tiny 
 {
     Line
-    line_new(int x0, int y0, int x1, int y1, TGAColor color)
+    line_new(int x0, int y0, int x1, int y1)
     {
         Line line;
         line.x0 = x0;
         line.y0 = y0;
         line.x1 = x1;
         line.y1 = y1;
-        line.color = color;
         return line;
     }
 
     void
-    line_draw(const Line& line, TGAImage& image)
+    line_draw(const Line& line, TGAImage& image, TGAColor color)
     {
         int dx = std::abs(line.x1 - line.x0);
         int dy = std::abs(line.y1 - line.y0);
@@ -24,7 +23,7 @@ namespace tiny
         {
             int x = (1.0f - t) * line.x0 + t * line.x1;
             int y = (1.0f - t) * line.y0 + t * line.y1;
-            image.set(x, y, line.color);
+            image.set(x, y, color);
         }
     }
 };
