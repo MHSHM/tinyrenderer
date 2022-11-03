@@ -1,5 +1,7 @@
 #include "line.h"
 
+#include <cmath>
+
 namespace tiny 
 {
     Line

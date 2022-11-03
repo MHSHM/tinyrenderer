@@ -13,4 +13,4 @@ SET includeFlags=-Isrc
 SET linkerFlags=-luser32
 
 ECHO "Building %assembly%%..."
-clang++ %objs% %compilerFlags% -o bin/%assembly%.exe %linkerFlags%
+g++ %objs% %compilerFlags% -o bin/%assembly%.exe %linkerFlags%

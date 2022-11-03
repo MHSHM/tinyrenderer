@@ -21,7 +21,7 @@ namespace tiny
         int min_y = std::min(pixel_0.y, (int)1e11);
         min_y = std::min(min_y, pixel_1.y);
         min_y = std::min(min_y, pixel_2.y);
-        int max_y = std::max(pixel_0.y, (int)1e11);
+        int max_y = std::max(pixel_0.y, (int)1e-11);
         max_y = std::max(max_y, pixel_1.y);
         max_y = std::max(max_y, pixel_2.y);
 
