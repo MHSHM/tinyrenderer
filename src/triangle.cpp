@@ -35,7 +35,11 @@ namespace tiny
         {
             for(int j = aabb.min_y; j < aabb.max_y; ++j)
             {
-                image.set(i, j, color);
+                mathy::Vector2 pixel = mathy::Vector2<float>::vec2_new((float)i, (float)j);
+                if(auto coord = mathy::is_inside_triangle(pixel, triangle.v0, triangle.v1, triangle.v2); coord.is_inside)
+                {
+                    image.set(i, j, TGAColor(255, 0,   0,   255));    
+                }
             }
         }
     }
