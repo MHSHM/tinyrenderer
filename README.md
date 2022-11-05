@@ -1,6 +1,9 @@
 # progress so far
 **flat shading**
-<br> ![flat shading](https://i.ibb.co/6YzvDTP/flat-shading.png)
+<br> ![flat shading](https://i.ibb.co/vDxZvBx/triangle-shading.png)
 <br>
 **wireframe**
-<br> ![wireframe](https://i.ibb.co/X2XffXt/wired.png)
+<br> ![wireframe](https://i.ibb.co/PYcbpW6/flat-shading.png)
+<br>
+**per pixel shading**
+<br> ![wireframe](https://i.ibb.co/q5WzGwd/per-pixel-shading.png)
