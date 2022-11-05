@@ -90,7 +90,7 @@ namespace tiny
     }
 
     void
-    triangle_draw_flat_shading(const Triangle& triangle, TGAImage* image, const mathy::Vector3<float>& light_direction, const TGAColor& color)
+    triangle_draw_flat_shading(const Triangle& triangle, TGAImage* image, tiny::Zbuffer* zbuffer, const mathy::Vector3<float>& light_direction, const TGAColor& color)
     {
         if(_triangle_is_backfacing(triangle, light_direction))
         {
@@ -108,7 +108,12 @@ namespace tiny
                 mathy::Vector2 pixel = mathy::Vector2<float>::vec2_new((float)i + 0.5f, (float)j + 0.5f);
                 if(auto coord = mathy::is_inside_triangle(pixel, triangle.v0, triangle.v1, triangle.v2); coord.is_inside)
                 {
-                    image->set(i, j, shaded_color);
+                    mathy::Vector3<float> pixel_pos = triangle.v0 * coord.u + triangle.v1 * coord.v + triangle.v2 * coord.w;
+                    if(pixel_pos.z > zbuffer->depths[i * zbuffer->height + j])
+                    {
+                        image->set(i, j, shaded_color);
+                        zbuffer->depths[i * zbuffer->height + j] = pixel_pos.z;
+                    }
                 }
             }
         }

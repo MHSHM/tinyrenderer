@@ -47,7 +47,7 @@ int main()
         v2.z = v2.z * (height / 2.0) + (height / 2.0);
 
         tiny::Triangle triangle = tiny::triangle_new(v0, v1, v2, n0, n1, n2);
-        tiny::triangle_draw_shading(triangle, image, zbuffer, light_direction, white);
+        tiny::triangle_draw_flat_shading(triangle, image, zbuffer, light_direction, white);
     }
 
     image->write_tga_file("output.tga");

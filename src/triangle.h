@@ -34,7 +34,7 @@ namespace tiny
     // draw flat shaded triangle
     // shading equations are evaluated once per triangle
     void
-    triangle_draw_flat_shading(const Triangle& triangle, TGAImage* image, const mathy::Vector3<float>& light_direction, const TGAColor& color);
+    triangle_draw_flat_shading(const Triangle& triangle, TGAImage* image, tiny::Zbuffer* zbuffer, const mathy::Vector3<float>& light_direction, const TGAColor& color);
 
     // draw shaded triangle
     // shading equations are evaluated once per pixel
