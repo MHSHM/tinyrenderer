@@ -127,6 +127,16 @@ namespace mathy
         }
 
         inline Vector3<T>
+        operator+(float scalar) const
+        {
+            Vector3<T> res;
+            res.x = this->x + scalar;
+            res.y = this->y + scalar;
+            res.z = this->z + scalar;
+            return res;
+        }
+
+        inline Vector3<T>
         operator+(const Vector3<T>& other) const
         {
             Vector3<T> res;

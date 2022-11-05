@@ -4,6 +4,7 @@
 #include "z-buffer.h"
 
 #include <iostream>
+#include <chrono>
 
 static const int width  = 800;
 static const int height = 800;
@@ -21,6 +22,7 @@ int main()
 
     mathy::Vector3<float> light_direction = mathy::Vector3<float>::vec3_new(0.0f, 0.0f, -1.0f);
 
+    auto start = std::chrono::system_clock::now();
     for(int i = 0; i < loader.LoadedIndices.size(); i+=3)
     {
         const std::vector<objl::Vertex>& vertices = loader.LoadedVertices;
@@ -33,24 +35,18 @@ int main()
         mathy::Vector3<float> n1 = mathy::Vector3<float>::vec3_new(vertices[loader.LoadedIndices[i + 1]].Normal.X, vertices[loader.LoadedIndices[i + 1]].Normal.Y, vertices[loader.LoadedIndices[i + 1]].Normal.Z);
         mathy::Vector3<float> n2 = mathy::Vector3<float>::vec3_new(vertices[loader.LoadedIndices[i + 2]].Normal.X, vertices[loader.LoadedIndices[i + 2]].Normal.Y, vertices[loader.LoadedIndices[i + 2]].Normal.Z);
 
-
-        v0.x = v0.x * (width / 2.0) + (width / 2.0);
-        v1.x = v1.x * (width / 2.0) + (width / 2.0);
-        v2.x = v2.x * (width / 2.0) + (width / 2.0);
-
-        v0.y = v0.y * (height / 2.0) + (height / 2.0);
-        v1.y = v1.y * (height / 2.0) + (height / 2.0);
-        v2.y = v2.y * (height / 2.0) + (height / 2.0);
-        
-        v0.z = v0.z * (height / 2.0) + (height / 2.0);
-        v1.z = v1.z * (height / 2.0) + (height / 2.0);
-        v2.z = v2.z * (height / 2.0) + (height / 2.0);
+        v0 = v0 * (width / 2.0f) + (width / 2.0f);
+        v1 = v1 * (width / 2.0f) + (width / 2.0f);
+        v2 = v2 * (width / 2.0f) + (width / 2.0f);
 
         tiny::Triangle triangle = tiny::triangle_new(v0, v1, v2, n0, n1, n2);
-        tiny::triangle_draw_flat_shading(triangle, image, zbuffer, light_direction, white);
+        tiny::triangle_draw_shading(triangle, image, zbuffer, light_direction, white);
     }
-
+    auto end = std::chrono::system_clock::now();
+    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms" << std::endl;
     image->write_tga_file("output.tga");
 
+    while (true);
+    
     return 0;
 }
