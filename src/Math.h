@@ -115,6 +115,26 @@ namespace mathy
 
             return res;
         }
+
+        inline Vector3<T>
+        operator*(float scalar) const
+        {
+            Vector3<T> res;
+            res.x = this->x * scalar;
+            res.y = this->y * scalar;
+            res.z = this->z * scalar;
+            return res;
+        }
+
+        inline Vector3<T>
+        operator+(const Vector3<T>& other) const
+        {
+            Vector3<T> res;
+            res.x = this->x + other.x;
+            res.y = this->y + other.y;
+            res.z = this->z + other.z;
+            return res;
+        }
     };
 
     inline static Barycentric
