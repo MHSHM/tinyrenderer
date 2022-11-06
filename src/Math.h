@@ -39,6 +39,24 @@ namespace mathy
         {
 
         }
+
+        inline Vector2<T>
+        operator*(float scalar) const
+        {
+            Vector2<T> res;
+            res.x = this->x * scalar;
+            res.y = this->y * scalar;
+            return res;
+        }
+
+        inline Vector2<T>
+        operator+(const Vector2<T>& other) const
+        {
+            Vector2<T> res;
+            res.x = this->x + other.x;
+            res.y = this->y + other.y;
+            return res;
+        }
     };
     
     

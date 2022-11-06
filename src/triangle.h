@@ -6,7 +6,7 @@
 
 namespace tiny 
 {
-    struct Triangle
+    struct Triangle_Data
     {
         mathy::Vector3<float> v0;
         mathy::Vector3<float> v1;
@@ -16,12 +16,20 @@ namespace tiny
         mathy::Vector3<float> n1;
         mathy::Vector3<float> n2;
 
-        mathy::Vector3<float> face_normal;
+        mathy::Vector2<float> uv0;
+        mathy::Vector2<float> uv1;
+        mathy::Vector2<float> uv2;
+
+        mathy::Vector3<float> face_normal;  
+    };
+
+    struct Triangle
+    {
+        Triangle_Data data;
     };
 
     Triangle
-    triangle_new(const mathy::Vector3<float>& v0, const mathy::Vector3<float>& v1, const mathy::Vector3<float>& v2,
-    const mathy::Vector3<float>& n0, const mathy::Vector3<float>& n1, const mathy::Vector3<float>& n2);
+    triangle_new(const Triangle_Data& data);
 
     // draw triangle as a wireframe
     void
@@ -40,4 +48,8 @@ namespace tiny
     // shading equations are evaluated once per pixel
     void
     triangle_draw_shading(const Triangle& triangle, TGAImage* image, tiny::Zbuffer* zbuffer, const mathy::Vector3<float>& light_direction, const TGAColor& color);
+
+    // draw a triangle and apply a diffuse texture to it
+    void
+    triangle_draw_diffuse(const Triangle& triangle, TGAImage* image, tiny::Zbuffer* zbuffer, const mathy::Vector3<float>& light_direction, TGAImage* diffuse);
 };

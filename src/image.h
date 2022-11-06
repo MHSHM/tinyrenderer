@@ -15,3 +15,11 @@ image_new(int width, int height, TGAImage::Format format)
     
     return &image;
 }
+
+inline static TGAImage*
+image_load(const char* path)
+{
+    static TGAImage image;
+    image.read_tga_file(path);
+    return &image;
+}

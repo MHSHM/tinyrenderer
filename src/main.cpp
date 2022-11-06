@@ -12,8 +12,9 @@ static const int height = 800;
 int main()
 {
     TGAImage* image = image_new(width, height, TGAImage::RGBA);
+    TGAImage* diffuse_texture = image_load("../textures/african_head_diffuse.tga");
     image->flip_vertically(); // i want to have the origin at the left bottom corner of the image
-    
+    diffuse_texture->flip_vertically();
     // allocate zbuffer for depth testing
     tiny::Zbuffer* zbuffer = tiny::zbuffer_new(width, height, -1e11f);
 
@@ -25,25 +26,30 @@ int main()
     auto start = std::chrono::system_clock::now();
     for(int i = 0; i < loader.LoadedIndices.size(); i+=3)
     {
+        tiny::Triangle_Data data;
         const std::vector<objl::Vertex>& vertices = loader.LoadedVertices;
 
-        mathy::Vector3<float> v0 = mathy::Vector3<float>::vec3_new(vertices[loader.LoadedIndices[i]].Position.X, vertices[loader.LoadedIndices[i]].Position.Y, vertices[loader.LoadedIndices[i]].Position.Z);
-        mathy::Vector3<float> v1 = mathy::Vector3<float>::vec3_new(vertices[loader.LoadedIndices[i + 1]].Position.X, vertices[loader.LoadedIndices[i + 1]].Position.Y, vertices[loader.LoadedIndices[i + 1]].Position.Z);
-        mathy::Vector3<float> v2 = mathy::Vector3<float>::vec3_new(vertices[loader.LoadedIndices[i + 2]].Position.X, vertices[loader.LoadedIndices[i + 2]].Position.Y, vertices[loader.LoadedIndices[i + 2]].Position.Z);
+        data.v0 = mathy::Vector3<float>::vec3_new(vertices[loader.LoadedIndices[i]].Position.X, vertices[loader.LoadedIndices[i]].Position.Y, vertices[loader.LoadedIndices[i]].Position.Z);
+        data.v1 = mathy::Vector3<float>::vec3_new(vertices[loader.LoadedIndices[i + 1]].Position.X, vertices[loader.LoadedIndices[i + 1]].Position.Y, vertices[loader.LoadedIndices[i + 1]].Position.Z);
+        data.v2 = mathy::Vector3<float>::vec3_new(vertices[loader.LoadedIndices[i + 2]].Position.X, vertices[loader.LoadedIndices[i + 2]].Position.Y, vertices[loader.LoadedIndices[i + 2]].Position.Z);
 
-        mathy::Vector3<float> n0 = mathy::Vector3<float>::vec3_new(vertices[loader.LoadedIndices[i]].Normal.X, vertices[loader.LoadedIndices[i]].Normal.Y, vertices[loader.LoadedIndices[i]].Normal.Z);
-        mathy::Vector3<float> n1 = mathy::Vector3<float>::vec3_new(vertices[loader.LoadedIndices[i + 1]].Normal.X, vertices[loader.LoadedIndices[i + 1]].Normal.Y, vertices[loader.LoadedIndices[i + 1]].Normal.Z);
-        mathy::Vector3<float> n2 = mathy::Vector3<float>::vec3_new(vertices[loader.LoadedIndices[i + 2]].Normal.X, vertices[loader.LoadedIndices[i + 2]].Normal.Y, vertices[loader.LoadedIndices[i + 2]].Normal.Z);
+        data.n0 = mathy::Vector3<float>::vec3_new(vertices[loader.LoadedIndices[i]].Normal.X, vertices[loader.LoadedIndices[i]].Normal.Y, vertices[loader.LoadedIndices[i]].Normal.Z);
+        data.n1 = mathy::Vector3<float>::vec3_new(vertices[loader.LoadedIndices[i + 1]].Normal.X, vertices[loader.LoadedIndices[i + 1]].Normal.Y, vertices[loader.LoadedIndices[i + 1]].Normal.Z);
+        data.n2 = mathy::Vector3<float>::vec3_new(vertices[loader.LoadedIndices[i + 2]].Normal.X, vertices[loader.LoadedIndices[i + 2]].Normal.Y, vertices[loader.LoadedIndices[i + 2]].Normal.Z);
 
-        v0 = v0 * (width / 2.0f) + (width / 2.0f);
-        v1 = v1 * (width / 2.0f) + (width / 2.0f);
-        v2 = v2 * (width / 2.0f) + (width / 2.0f);
+        data.uv0 = mathy::Vector2<float>::vec2_new(vertices[loader.LoadedIndices[i]].TextureCoordinate.X, vertices[loader.LoadedIndices[i]].TextureCoordinate.Y);
+        data.uv1 = mathy::Vector2<float>::vec2_new(vertices[loader.LoadedIndices[i + 1]].TextureCoordinate.X, vertices[loader.LoadedIndices[i + 1]].TextureCoordinate.Y);
+        data.uv2 = mathy::Vector2<float>::vec2_new(vertices[loader.LoadedIndices[i + 2]].TextureCoordinate.X, vertices[loader.LoadedIndices[i + 2]].TextureCoordinate.Y);
 
-        tiny::Triangle triangle = tiny::triangle_new(v0, v1, v2, n0, n1, n2);
-        tiny::triangle_draw_shading(triangle, image, zbuffer, light_direction, white);
+        data.v0 = data.v0 * (width / 2.0f) + (width / 2.0f);
+        data.v1 = data.v1 * (width / 2.0f) + (width / 2.0f);
+        data.v2 = data.v2 * (width / 2.0f) + (width / 2.0f);
+
+        tiny::Triangle triangle = tiny::triangle_new(data);
+        tiny::triangle_draw_diffuse(triangle, image, zbuffer, light_direction, diffuse_texture);
     }
     auto end = std::chrono::system_clock::now();
-    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms" << std::endl;
+    std::cout << "image was generated at: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms\n";
     image->write_tga_file("output.tga");
 
     while (true);
