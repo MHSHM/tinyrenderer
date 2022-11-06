@@ -7,3 +7,6 @@
 <br>
 **per pixel shading**
 <br> ![wireframe](https://i.ibb.co/q5WzGwd/per-pixel-shading.png)
+<br>
+**diffuse**
+<br> ![wireframe](https://i.ibb.co/kSq2ffJ/diffuse.png)
