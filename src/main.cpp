@@ -6,13 +6,18 @@
 #include <iostream>
 #include <chrono>
 
+static const TGAColor white   = TGAColor(255, 255, 255, 255);
+static const TGAColor red     = TGAColor(255, 0,   0,   255);
+static const TGAColor green   = TGAColor(0, 255,   0,   255);
+static const TGAColor blue    = TGAColor(0 , 0,   255,   255);
+
 static const int width  = 800;
 static const int height = 800;
 
 int main()
 {
-    TGAImage* image = image_new(width, height, TGAImage::RGBA);
-    TGAImage* diffuse_texture = image_load("../textures/african_head_diffuse.tga");
+    TGAImage* image = tiny::image_new(width, height, TGAImage::RGBA);
+    TGAImage* diffuse_texture = tiny::image_load("../textures/african_head_diffuse.tga");
     image->flip_vertically(); // i want to have the origin at the left bottom corner of the image
     diffuse_texture->flip_vertically();
     // allocate zbuffer for depth testing
