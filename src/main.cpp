@@ -2,6 +2,7 @@
 #include "triangle.h"
 #include "z-buffer.h"
 #include "mesh.h"
+#include "renderer.h"
 
 #include <iostream>
 #include <chrono>
@@ -20,7 +21,7 @@ int main()
     Resource_Manager* resource_manager = resource_manager_new();
 
     // screen buffer
-    Image* image = tiny::image_new(width, height, TGAImage::RGBA);
+    tiny::Image* image = tiny::image_new(width, height, TGAImage::RGBA);
     image->data->flip_vertically(); // i want to have the origin at the left bottom corner of the image
     resource_manager_add_resource(resource_manager, image, "screen buffer");
 
@@ -28,7 +29,7 @@ int main()
     tiny::Zbuffer* zbuffer = tiny::zbuffer_new(width, height, -1e11f);
 
     // diffuse texture
-    Image* diffuse_texture = tiny::image_new();
+    tiny::Image* diffuse_texture = tiny::image_new();
     diffuse_texture->vtable->load(diffuse_texture, resource_manager, "../textures/african_head_diffuse.tga");
     diffuse_texture->data->flip_vertically();
     
@@ -41,17 +42,13 @@ int main()
     mesh_scale(mesh, (width / 2.0f), (width / 2.0f), (width / 2.0f));
     mesh_translate(mesh, (width / 2.0f), (width / 2.0f), (width / 2.0f));
     
-    for(auto& triangle: mesh->triangles)
-    {
-        tiny::triangle_draw_diffuse(triangle, image, zbuffer, light_direction, diffuse_texture);
-    }
+    // render the mesh
+    tiny::render_wireframe(mesh, image, white);
 
+    // write the frame to the disk
     image->data->write_tga_file("output.tga");
 
-    image->vtable->free(image, resource_manager, "screen buffer");
-    diffuse_texture->vtable->free(diffuse_texture, resource_manager, "../textures/african_head_diffuse.tga");
-    mesh->vtable->free(mesh, resource_manager, "../obj/african_head.obj");
-
+    // free all allocated resources
     resource_manager_free(resource_manager);
 
     while (true);

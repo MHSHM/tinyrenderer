@@ -5,13 +5,13 @@
 
 struct TGAImage;
 
-struct Image : Resource 
-{
-    TGAImage* data;
-};
-
 namespace tiny
 {
+    struct Image : Resource 
+    {
+        TGAImage* data;
+    };
+    
     Image*
     image_new(int width, int height, TGAImage::Format format);
 

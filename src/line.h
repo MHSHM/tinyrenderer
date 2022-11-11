@@ -11,7 +11,4 @@ namespace tiny
 
     Line
     line_new(int x0, int y0, int x1, int y1);
-
-    void
-    line_draw(const Line& line, Image* image, TGAColor color);
 };
