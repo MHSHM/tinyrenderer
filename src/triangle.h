@@ -1,6 +1,6 @@
 #pragma once
 
-#include "tgaimage.h"
+#include "image.h"
 #include "Math.h"
 #include "z-buffer.h"
 
@@ -33,23 +33,23 @@ namespace tiny
 
     // draw triangle as a wireframe
     void
-    triangle_draw_wireframe(const Triangle& triangle, TGAImage* image, const TGAColor& color);
+    triangle_draw_wireframe(const Triangle& triangle, Image* image, const TGAColor& color);
 
     // draw triangle and fill it with a constant color
     void
-    triangle_draw_fill(const Triangle& triangle, TGAImage* image, const TGAColor& color);
+    triangle_draw_fill(const Triangle& triangle, Image* image, const TGAColor& color);
 
     // draw flat shaded triangle
     // shading equations are evaluated once per triangle
     void
-    triangle_draw_flat_shading(const Triangle& triangle, TGAImage* image, tiny::Zbuffer* zbuffer, const mathy::Vector3<float>& light_direction, const TGAColor& color);
+    triangle_draw_flat_shading(const Triangle& triangle, Image* image, tiny::Zbuffer* zbuffer, const mathy::Vector3<float>& light_direction, const TGAColor& color);
 
     // draw shaded triangle
     // shading equations are evaluated once per pixel
     void
-    triangle_draw_shading(const Triangle& triangle, TGAImage* image, tiny::Zbuffer* zbuffer, const mathy::Vector3<float>& light_direction, const TGAColor& color);
+    triangle_draw_shading(const Triangle& triangle, Image* image, tiny::Zbuffer* zbuffer, const mathy::Vector3<float>& light_direction, const TGAColor& color);
 
     // draw a triangle and apply a diffuse texture to it
     void
-    triangle_draw_diffuse(const Triangle& triangle, TGAImage* image, tiny::Zbuffer* zbuffer, const mathy::Vector3<float>& light_direction, TGAImage* diffuse);
+    triangle_draw_diffuse(const Triangle& triangle, Image* image, tiny::Zbuffer* zbuffer, const mathy::Vector3<float>& light_direction, Image* diffuse);
 };

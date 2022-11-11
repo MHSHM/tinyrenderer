@@ -16,17 +16,27 @@ static const int height = 800;
 
 int main()
 {
-    TGAImage* image = tiny::image_new(width, height, TGAImage::RGBA);
-    TGAImage* diffuse_texture = tiny::image_load("../textures/african_head_diffuse.tga");
-    image->flip_vertically(); // i want to have the origin at the left bottom corner of the image
-    diffuse_texture->flip_vertically();
-    // allocate zbuffer for depth testing
-    tiny::Zbuffer* zbuffer = tiny::zbuffer_new(width, height, -1e11f);
     // allocate resource manager
     Resource_Manager* resource_manager = resource_manager_new();
+
+    // screen buffer
+    Image* image = tiny::image_new(width, height, TGAImage::RGBA);
+    image->data->flip_vertically(); // i want to have the origin at the left bottom corner of the image
+    resource_manager_add_resource(resource_manager, image, "screen buffer");
+
+    // allocate zbuffer for depth testing
+    tiny::Zbuffer* zbuffer = tiny::zbuffer_new(width, height, -1e11f);
+
+    // diffuse texture
+    Image* diffuse_texture = tiny::image_new();
+    diffuse_texture->vtable->load(diffuse_texture, resource_manager, "../textures/african_head_diffuse.tga");
+    diffuse_texture->data->flip_vertically();
+    
+    // light
     mathy::Vector3<float> light_direction = mathy::Vector3<float>::vec3_new(0.0f, 0.0f, -1.0f);
 
-    Mesh* mesh = mesh_new();
+    // create a mesh
+    tiny::Mesh* mesh = tiny::mesh_new();
     mesh->vtable->load(mesh, resource_manager, "../obj/african_head.obj");
     mesh_scale(mesh, (width / 2.0f), (width / 2.0f), (width / 2.0f));
     mesh_translate(mesh, (width / 2.0f), (width / 2.0f), (width / 2.0f));
@@ -36,9 +46,14 @@ int main()
         tiny::triangle_draw_diffuse(triangle, image, zbuffer, light_direction, diffuse_texture);
     }
 
-    image->write_tga_file("output.tga");
+    image->data->write_tga_file("output.tga");
+
+    image->vtable->free(image, resource_manager, "screen buffer");
+    diffuse_texture->vtable->free(diffuse_texture, resource_manager, "../textures/african_head_diffuse.tga");
+    mesh->vtable->free(mesh, resource_manager, "../obj/african_head.obj");
 
     resource_manager_free(resource_manager);
+
     while (true);
     
     return 0;

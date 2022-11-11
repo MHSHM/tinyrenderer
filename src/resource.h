@@ -13,6 +13,12 @@ struct Resource_Manager
     std::unordered_map<std::string, Resource*> resources_map;
 };
 
+struct VTable
+{
+    void(*load)(struct Resource* resource, Resource_Manager* resources_manager, const std::string& path);
+    void(*free)(struct Resource* resource, Resource_Manager* resources_manager, const std::string& path);
+};
+
 inline static Resource_Manager*
 resource_manager_new()
 {
@@ -23,18 +29,26 @@ resource_manager_new()
 inline static void
 resource_manager_free(Resource_Manager* resource_manager)
 {
-    for(auto& pair: resource_manager->resources_map)
+    for(auto& [_, resource]: resource_manager->resources_map)
     {
-        if(pair.second)
+        if(resource)
         {
-             delete pair.second;
-             pair.second = nullptr;
+             delete resource->vtable;
+             delete resource;
+             resource->vtable = nullptr;
+             resource = nullptr;
         }
     }
 }
 
-struct VTable
+inline static void
+resource_manager_add_resource(Resource_Manager* resource_manager, Resource* resource, const std::string& tag)
 {
-    void(*load)(struct Resource* mesh, Resource_Manager* resources_manager, const std::string& path);
-    void(*free)(struct Resource* mesh, Resource_Manager* resources_manager, const std::string& path);
-};
+    resource_manager->resources_map[tag] = resource;
+}
+
+inline static void
+resource_manager_remove_resource(Resource_Manager* resource_manager, Resource* resource, const std::string& tag)
+{
+    resource_manager->resources_map.erase(tag);
+}

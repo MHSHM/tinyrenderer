@@ -16,7 +16,7 @@ namespace tiny
     }
 
     void
-    line_draw(const Line& line, TGAImage* image, TGAColor color)
+    line_draw(const Line& line, Image* image, TGAColor color)
     {
         int dx = std::abs(line.x1 - line.x0);
         int dy = std::abs(line.y1 - line.y0);
@@ -25,7 +25,7 @@ namespace tiny
         {
             int x = (1.0f - t) * line.x0 + t * line.x1;
             int y = (1.0f - t) * line.y0 + t * line.y1;
-            image->set(x, y, color);
+            image->data->set(x, y, color);
         }
     }
 };
