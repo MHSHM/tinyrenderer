@@ -1,12 +1,20 @@
 #pragma once
 
 #include "tgaimage.h"
+#include "resource.h"
 
-namespace tiny 
+struct TGAImage;
+
+struct Image : Resource 
 {
-    TGAImage*
+    TGAImage* data;
+};
+
+namespace tiny
+{
+    Image*
     image_new(int width, int height, TGAImage::Format format);
 
-    TGAImage*
-    image_load(const char* path);
+    Image*
+    image_new();
 };
