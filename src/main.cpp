@@ -27,6 +27,7 @@ int main()
 
     // allocate zbuffer for depth testing
     tiny::Zbuffer* zbuffer = tiny::zbuffer_new(width, height, -1e11f);
+    resource_manager_add_resource(resource_manager, zbuffer, "z-buffer");
 
     // diffuse texture
     tiny::Image* diffuse_texture = tiny::image_new();
@@ -43,7 +44,7 @@ int main()
     mesh_translate(mesh, (width / 2.0f), (width / 2.0f), (width / 2.0f));
     
     // render the mesh
-    tiny::render_wireframe(mesh, image, white);
+    tiny::render_with_diffuse(mesh, image, zbuffer, light_direction, diffuse_texture);
 
     // write the frame to the disk
     image->data->write_tga_file("output.tga");

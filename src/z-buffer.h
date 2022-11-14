@@ -1,12 +1,14 @@
 #pragma once
 
+#include "resource.h"
+
 #include <vector>
 #include <stdio.h>
 #include <cstring>
 
 namespace tiny
 {
-    struct Zbuffer
+    struct Zbuffer: Resource
     {
         std::vector<float> depths;
 
