@@ -1,5 +1,5 @@
 # progress so far
-**flat shading**
+**per triangle shading**
 <br> ![flat shading](https://i.ibb.co/vDxZvBx/triangle-shading.png)
 <br>
 **wireframe**
