@@ -6,15 +6,22 @@
 #include "z-buffer.h"
 #include "sampler.h"
 
-namespace tiny 
+namespace tiny
 {
+    inline static bool
+    check_pixel_coord(int width, int height, int x, int y)
+    {
+        return x >= 0 && x < width && y >= 0 && y < height;
+    }
+
+
     inline static bool
     _triangle_is_backfacing(const Triangle& triangle, const mathy::Vector3<float>& light_direction)
     {
         float dot = mathy::Vector3<float>::dot(triangle.data.face_normal, light_direction);
         return (dot > 0.00001f);
     }
-    
+
     inline static TGAColor
     _triangle_flat_shade(const Triangle& triangle, const TGAColor& color, const mathy::Vector3<float>& light_direcrion)
     {
@@ -34,7 +41,7 @@ namespace tiny
 
         return shaded_color;
     }
-    
+
     inline static TGAColor
     _triangle_per_pixel_shading(const mathy::Vector3<float>& normal, const mathy::Vector3<float>& light_direction, const TGAColor& color)
     {
@@ -74,7 +81,7 @@ namespace tiny
         }
     }
 
-    void 
+    void
     render_wireframe(const Mesh* mesh, Image* image, const TGAColor& color)
     {
         for(auto& triangle: mesh->triangles)
@@ -89,7 +96,7 @@ namespace tiny
         }
     }
 
-    void 
+    void
     render_fill(const Mesh* mesh, Image* image, const TGAColor& color)
     {
         for(auto& triangle: mesh->triangles)
@@ -100,6 +107,11 @@ namespace tiny
             {
                 for(int j = aabb.min_y; j <= aabb.max_y; ++j)
                 {
+                    if(!check_pixel_coord(image->data->width(), image->data->height(), i, j))
+                    {
+                        continue;
+                    }
+
                     mathy::Vector2 pixel = mathy::Vector2<float>::vec2_new((float)i + 0.5f, (float)j + 0.5f);
                     if(auto coord = mathy::is_inside_triangle(pixel, triangle.data.v0, triangle.data.v1, triangle.data.v2); coord.is_inside)
                     {
@@ -110,7 +122,7 @@ namespace tiny
         }
     }
 
-    void 
+    void
     render_per_traingle_shading(const Mesh* mesh, Image* image, Zbuffer* zbuffer, const mathy::Vector3<float>& light_direction, const TGAColor& color)
     {
         for(auto& triangle: mesh->triangles)
@@ -123,11 +135,16 @@ namespace tiny
             TGAColor shaded_color = _triangle_flat_shade(triangle, color, light_direction);
 
             AABB aabb = aabb_new(triangle);
-            
+
             for(int i = aabb.min_x; i <= aabb.max_x; ++i)
             {
                 for(int j = aabb.min_y; j <= aabb.max_y; ++j)
                 {
+                    if(!check_pixel_coord(image->data->width(), image->data->height(), i, j))
+                    {
+                        continue;
+                    }
+
                     mathy::Vector2 pixel = mathy::Vector2<float>::vec2_new((float)i + 0.5f, (float)j + 0.5f);
                     if(auto coord = mathy::is_inside_triangle(pixel, triangle.data.v0, triangle.data.v1, triangle.data.v2); coord.is_inside)
                     {
@@ -154,11 +171,16 @@ namespace tiny
             }
 
             AABB aabb = aabb_new(triangle);
-            
+
             for(int i = aabb.min_x; i <= aabb.max_x; ++i)
             {
                 for(int j = aabb.min_y; j <= aabb.max_y; ++j)
                 {
+                    if(!check_pixel_coord(image->data->width(), image->data->height(), i, j))
+                    {
+                        continue;
+                    }
+
                     mathy::Vector2 pixel = mathy::Vector2<float>::vec2_new((float)i + 0.5f, (float)j + 0.5f);
                     if(auto coord = mathy::is_inside_triangle(pixel, triangle.data.v0, triangle.data.v1, triangle.data.v2); coord.is_inside)
                     {
@@ -189,18 +211,23 @@ namespace tiny
             }
 
             AABB aabb = aabb_new(triangle);
-            
+
             for(int i = aabb.min_x; i <= aabb.max_x; ++i)
             {
                 for(int j = aabb.min_y; j <= aabb.max_y; ++j)
                 {
+                    if(!check_pixel_coord(image->data->width(), image->data->height(), i, j))
+                    {
+                        continue;
+                    }
+
                     mathy::Vector2 pixel = mathy::Vector2<float>::vec2_new((float)i + 0.5f, (float)j + 0.5f);
                     if(auto coord = mathy::is_inside_triangle(pixel, triangle.data.v0, triangle.data.v1, triangle.data.v2); coord.is_inside)
                     {
                         mathy::Vector3<float> pixel_normal = triangle.data.n0 * coord.u + triangle.data.n1 * coord.v + triangle.data.n2 * coord.w;
                         mathy::Vector3<float> pixel_pos    = triangle.data.v0 * coord.u + triangle.data.v1 * coord.v + triangle.data.v2 * coord.w;
                         mathy::Vector2<float> pixel_uv     = triangle.data.uv0 * coord.u + triangle.data.uv1 * coord.v + triangle.data.uv2 * coord.w;
-                        
+
                         // depth test
                         if(pixel_pos.z > zbuffer->depths[i * zbuffer->height + j])
                         {
