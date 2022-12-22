@@ -10,6 +10,10 @@ namespace tiny
     inline static void
     _free_zbuffer(Resource* resource, Resource_Manager* resource_manager, const std::string& path)
     {
+        Zbuffer* zbuffer = (Zbuffer*)zbuffer;
+        delete zbuffer->vtable;
+        delete zbuffer;
+        resource_manager_remove_resource(resource_manager, resource, path);
     }
 
 
