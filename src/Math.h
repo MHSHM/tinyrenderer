@@ -155,6 +155,16 @@ namespace mathy
         }
 
         inline Vector3<T>
+        operator/(float divisior) const
+        {
+            Vector3<T> res;
+            res.x = this->x / divisior;
+            res.y = this->y / divisior;
+            res.z = this->z / divisior;
+            return res;
+        }
+
+        inline Vector3<T>
         operator+(const Vector3<T>& other) const
         {
             Vector3<T> res;
