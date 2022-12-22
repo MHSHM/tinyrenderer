@@ -33,16 +33,15 @@ int main()
     tiny::Image* diffuse_texture = tiny::image_new();
     diffuse_texture->vtable->load(diffuse_texture, resource_manager, "../textures/african_head_diffuse.tga");
     diffuse_texture->data->flip_vertically();
-    
+
     // light
     mathy::Vector3<float> light_direction = mathy::Vector3<float>::vec3_new(0.0f, 0.0f, -1.0f);
 
     // create a mesh
     tiny::Mesh* mesh = tiny::mesh_new();
     mesh->vtable->load(mesh, resource_manager, "../obj/african_head.obj");
-    mesh_scale(mesh, (width / 2.0f), (width / 2.0f), (width / 2.0f));
-    mesh_translate(mesh, (width / 2.0f), (width / 2.0f), (width / 2.0f));
-    
+    mesh_scale(mesh, (width / 2.0f), (width / 2.0f), 1.0f);
+    mesh_translate(mesh, (width / 2.0f), (width / 2.0f), 0.0f);
     // render the mesh
     tiny::render_with_diffuse(mesh, image, zbuffer, light_direction, diffuse_texture);
 
@@ -53,6 +52,6 @@ int main()
     resource_manager_free(resource_manager);
 
     while (true);
-    
+
     return 0;
 }
