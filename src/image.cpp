@@ -1,6 +1,6 @@
 #include "image.h"
 
-namespace tiny 
+namespace tiny
 {
     inline static void
     _image_load(Resource* resource, Resource_Manager* resource_manager, const std::string& path)
@@ -14,10 +14,7 @@ namespace tiny
     _image_free(Resource* resource, Resource_Manager* resource_manager, const std::string& path)
     {
         Image* image = (Image*)resource;
-        delete image->vtable;
         delete image->data;
-        
-        image->vtable = nullptr;
         image->data   = nullptr;
 
         delete image;
@@ -29,9 +26,8 @@ namespace tiny
     image_new(int width, int height, TGAImage::Format format)
     {
         Image* image  = new Image;
-        image->vtable = new VTable;
-        image->vtable->load = &_image_load;
-        image->vtable->free = &_image_free;
+        image->load = &_image_load;
+        image->free = &_image_free;
         image->data   = new TGAImage(width, height, format);
         return image;
     }
@@ -40,9 +36,8 @@ namespace tiny
     image_new()
     {
         Image* image  = new Image;
-        image->vtable = new VTable;
-        image->vtable->load = &_image_load;
-        image->vtable->free = &_image_free;
+        image->load = &_image_load;
+        image->free = &_image_free;
         image->data   = new TGAImage;
         return image;
     }

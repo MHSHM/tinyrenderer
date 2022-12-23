@@ -3,7 +3,7 @@
 #include "AABB.h"
 #include "sampler.h"
 
-namespace tiny 
+namespace tiny
 {
     Triangle
     triangle_new(const Triangle_Data& data)
@@ -23,7 +23,7 @@ namespace tiny
         mathy::Vector3<float> e1 = triangle.data.v2 - triangle.data.v0;
         triangle.data.face_normal = mathy::Vector3<float>::cross(e0, e1);
         triangle.data.face_normal = mathy::Vector3<float>::normalize(triangle.data.face_normal);
-        
+
         return triangle;
     }
 };

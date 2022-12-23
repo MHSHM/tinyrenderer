@@ -7,11 +7,11 @@ struct TGAImage;
 
 namespace tiny
 {
-    struct Image : Resource 
+    struct Image : Resource
     {
         TGAImage* data;
     };
-    
+
     Image*
     image_new(int width, int height, TGAImage::Format format);
 

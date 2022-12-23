@@ -3,17 +3,12 @@
 #include <unordered_map>
 #include <string>
 
-struct Resource
-{
-    struct VTable* vtable;
-};
-
 struct Resource_Manager
 {
-    std::unordered_map<std::string, Resource*> resources_map;
+    std::unordered_map<std::string, struct Resource*> resources_map;
 };
 
-struct VTable
+struct Resource
 {
     void(*load)(struct Resource* resource, Resource_Manager* resources_manager, const std::string& path);
     void(*free)(struct Resource* resource, Resource_Manager* resources_manager, const std::string& path);
@@ -33,9 +28,7 @@ resource_manager_free(Resource_Manager* resource_manager)
     {
         if(resource)
         {
-             delete resource->vtable;
              delete resource;
-             resource->vtable = nullptr;
              resource = nullptr;
         }
     }

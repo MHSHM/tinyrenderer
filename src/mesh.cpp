@@ -1,7 +1,7 @@
 #include "mesh.h"
 #include "objloader.h"
 
-namespace tiny 
+namespace tiny
 {
     inline static void
     _load_mesh(Resource* resource, Resource_Manager* resource_manager, const std::string& path)
@@ -38,7 +38,6 @@ namespace tiny
     _free_mesh(Resource* resource, Resource_Manager* resource_manager, const std::string& path)
     {
         Mesh* mesh = (Mesh*)resource;
-        delete mesh->vtable;
         delete mesh;
         resource_manager_remove_resource(resource_manager, resource, path);
     }
@@ -47,9 +46,8 @@ namespace tiny
     mesh_new()
     {
         Mesh* mesh = new Mesh;
-        mesh->vtable = new VTable;
-        mesh->vtable->load = &_load_mesh;
-        mesh->vtable->free   = &_free_mesh;
+        mesh->load = &_load_mesh;
+        mesh->free   = &_free_mesh;
         return mesh;
     }
 
