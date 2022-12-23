@@ -201,6 +201,6 @@ namespace mathy
     inline static float
     to_radians(float angle_in_degrees)
     {
-        return 1.0f * (PI / 180.0f);
+        return angle_in_degrees * (PI / 180.0f);
     }
 };

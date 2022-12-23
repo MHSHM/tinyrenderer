@@ -52,7 +52,5 @@ int main()
     // free all allocated resources
     resource_manager_free(resource_manager);
 
-    while (true);
-
     return 0;
 }
