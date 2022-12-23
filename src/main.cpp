@@ -15,6 +15,8 @@ static const TGAColor blue    = TGAColor(0 , 0,   255,   255);
 static const int width  = 800;
 static const int height = 800;
 
+using namespace mathy;
+
 int main()
 {
     // allocate resource manager
@@ -35,7 +37,7 @@ int main()
     diffuse_texture->data->flip_vertically();
 
     // light
-    mathy::Vector3<float> light_direction = mathy::Vector3<float>::vec3_new(0.0f, 0.0f, -1.0f);
+    vec3 light_direction = vec3::vec3_new(0.0f, 0.0f, -1.0f);
 
     // create a mesh
     tiny::Mesh* mesh = tiny::mesh_new();

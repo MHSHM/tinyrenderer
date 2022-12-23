@@ -203,4 +203,9 @@ namespace mathy
     {
         return angle_in_degrees * (PI / 180.0f);
     }
+
+    typedef Vector3<float> vec3;
+    typedef Vector3<int> ivec3;
+    typedef Vector2<float> vec2;
+    typedef Vector2<int> ivec2;
 };
