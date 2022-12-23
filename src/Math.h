@@ -7,6 +7,8 @@
 
 namespace mathy
 {
+    const float PI = 3.14159265359f;
+
     struct Barycentric
     {
         float u, v, w;
@@ -14,7 +16,7 @@ namespace mathy
     };
 
     template<typename T>
-    struct Vector2 
+    struct Vector2
     {
         T x, y;
 
@@ -27,7 +29,7 @@ namespace mathy
             return v;
         }
 
-        inline Vector2<T> 
+        inline Vector2<T>
         operator-(const Vector2<T>& other) const
         {
             Vector2<T> res = vec2_new(this->x - other.x, this->y - other.y);
@@ -58,8 +60,7 @@ namespace mathy
             return res;
         }
     };
-    
-    
+
     template<typename T>
     struct Vector3
     {
@@ -89,7 +90,7 @@ namespace mathy
 
             return res;
         }
-        
+
         inline static T
         dot(const Vector3<T>& v0, const Vector3<T>& v1)
         {
@@ -195,5 +196,11 @@ namespace mathy
         coord.w = 1.0f - coord.u - coord.v;
         coord.is_inside = (coord.u >= 0.0f && coord.u <= 1.0f && coord.v >= 0.0f && coord.v <= 1.0f && coord.w >= 0.0f && coord.w <= 1.0f);
         return coord;
+    }
+
+    inline static float
+    to_radians(float angle_in_degrees)
+    {
+        return 1.0f * (PI / 180.0f);
     }
 };

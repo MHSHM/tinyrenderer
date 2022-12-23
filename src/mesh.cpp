@@ -74,4 +74,64 @@ namespace tiny
             triangle.data.v2 = triangle.data.v2 + translation;
         }
     }
+
+    void
+    mesh_rotate_x(Mesh* mesh, float angle)
+    {
+        for(auto& triangle: mesh->triangles)
+        {
+            auto v0 = triangle.data.v0;
+            auto v1 = triangle.data.v1;
+            auto v2 = triangle.data.v2;
+            // TODO: add support for matrices in mathy
+            triangle.data.v0.y = v0.y * cosf(angle) - (v0.z * sinf(angle));
+            triangle.data.v0.z = v0.y * sinf(angle) + (v0.z * cosf(angle));
+
+            triangle.data.v1.y = v1.y * cosf(angle) - (v1.z * sinf(angle));
+            triangle.data.v1.z = v1.y * sinf(angle) + (v1.z * cosf(angle));
+
+            triangle.data.v2.y = v2.y * cosf(angle) - (v2.z * sinf(angle));
+            triangle.data.v2.z = v2.y * sinf(angle) + (v2.z * cosf(angle));
+        }
+    }
+
+    void
+    mesh_rotate_y(Mesh* mesh, float angle)
+    {
+        for(auto& triangle: mesh->triangles)
+        {
+            auto v0 = triangle.data.v0;
+            auto v1 = triangle.data.v1;
+            auto v2 = triangle.data.v2;
+            // TODO: add support for matrices in mathy
+            triangle.data.v0.x = v0.x * cosf(angle) + v0.z * sinf(angle);
+            triangle.data.v0.z = -v0.x * sinf(angle) + v0.z * cosf(angle);
+
+            triangle.data.v1.x = v1.x * cosf(angle) + v1.z * sinf(angle);
+            triangle.data.v1.z = -v1.x * sinf(angle) + v1.z * cosf(angle);
+
+            triangle.data.v2.x = v2.x * cosf(angle) + v2.z * sinf(angle);
+            triangle.data.v2.z = -v2.x * sinf(angle) + v2.z * cosf(angle);
+        }
+    }
+
+    void
+    mesh_rotate_z(Mesh* mesh, float angle)
+    {
+        for(auto& triangle: mesh->triangles)
+        {
+            auto v0 = triangle.data.v0;
+            auto v1 = triangle.data.v1;
+            auto v2 = triangle.data.v2;
+            // TODO: add support for matrices in mathy
+            triangle.data.v0.x = v0.x * cosf(angle) - (v0.y * sinf(angle));
+            triangle.data.v0.y = v0.x * sinf(angle) + (v0.y * cosf(angle));
+
+            triangle.data.v1.x = v1.x * cosf(angle) - (v1.y * sinf(angle));
+            triangle.data.v1.y = v1.x * sinf(angle) + (v1.y * cosf(angle));
+
+            triangle.data.v2.x = v2.x * cosf(angle) - (v2.y * sinf(angle));
+            triangle.data.v2.y = v2.x * sinf(angle) + (v2.y * cosf(angle));
+        }
+    }
 };

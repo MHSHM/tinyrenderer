@@ -40,8 +40,9 @@ int main()
     // create a mesh
     tiny::Mesh* mesh = tiny::mesh_new();
     mesh->load(mesh, resource_manager, "../obj/african_head.obj");
-    mesh_scale(mesh, (width / 2.0f), (width / 2.0f), 1.0f);
-    mesh_translate(mesh, (width / 1.0f), (width / 2.0f), 0.0f);
+    mesh_rotate_y(mesh, 0.3 * mathy::PI);
+    mesh_scale(mesh, (width / 2.0f), (width / 2.0f), (width / 2.0f));
+    mesh_translate(mesh, (width / 2.0f), (width / 2.0f), (width / 2.0f));
     // render the mesh
     tiny::render_with_diffuse(mesh, image, zbuffer, light_direction, diffuse_texture);
 

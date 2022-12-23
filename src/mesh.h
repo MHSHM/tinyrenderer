@@ -5,8 +5,8 @@
 
 #include <vector>
 
-namespace tiny 
-{    
+namespace tiny
+{
     struct Mesh : Resource
     {
         std::vector<tiny::Triangle> triangles;
@@ -20,4 +20,19 @@ namespace tiny
 
     void
     mesh_translate(Mesh* mesh, float translate_x, float translate_y, float translate_z);
+
+    // rotate the given mesh around the x axis by the given angle
+    // the angle is in radians
+    void
+    mesh_rotate_x(Mesh* mesh, float angle);
+
+    // rotate the given mesh around the y axis by the given angle
+    // the angle is in radians
+    void
+    mesh_rotate_y(Mesh* mesh, float angle);
+
+    // rotate the given radians around the z axis by the given angle
+    // the angle is in degrees
+    void
+    mesh_rotate_z(Mesh* mesh, float angle);
 };
