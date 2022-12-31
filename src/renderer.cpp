@@ -167,10 +167,10 @@ namespace tiny
     {
         for(auto& triangle: mesh->triangles)
         {
-            if(_triangle_is_backfacing(triangle, light_direction))
-            {
-                continue;
-            }
+            //if(_triangle_is_backfacing(triangle, light_direction))
+            //{
+                //continue;
+            //}
 
             AABB aabb = aabb_new(triangle);
 

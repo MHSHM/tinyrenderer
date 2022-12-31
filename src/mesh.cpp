@@ -136,4 +136,24 @@ namespace tiny
             triangle.data.v2.y = v2.x * sinf(angle) + (v2.y * cosf(angle));
         }
     }
+
+    // expects the mesh to be in view space (.i.e camera at the origin)
+    void
+    mesh_z_division(Mesh* mesh, float fov)
+    {
+        // TODO: add matrices to mathy
+        for(auto& triangle: mesh->triangles)
+        {
+            float fov_half_angle = fov / 2.0f;
+            float scalar = 1.0f / tanf(mathy::to_radians(fov_half_angle));
+            triangle.data.v0.x = (triangle.data.v0.x * scalar) / -(triangle.data.v0.z + 0.00001f);
+            triangle.data.v0.y = (triangle.data.v0.y * scalar) / -(triangle.data.v0.z + 0.00001f);
+
+            triangle.data.v1.x = (triangle.data.v1.x * scalar) / -(triangle.data.v1.z + 0.00001f);
+            triangle.data.v1.y = (triangle.data.v1.y * scalar) / -(triangle.data.v1.z + 0.00001f);
+
+            triangle.data.v2.x = (triangle.data.v2.x * scalar) / -(triangle.data.v2.z + 0.00001f);
+            triangle.data.v2.y = (triangle.data.v2.y * scalar) / -(triangle.data.v2.z + 0.00001f);
+        }
+    }
 };

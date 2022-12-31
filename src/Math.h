@@ -184,6 +184,17 @@ namespace mathy
             res.z = this->z * other.z;
             return res;
         }
+
+        inline Vector3<T>
+        operator/(T divisior)
+        {
+            Vector3<T> res;
+            res.x = this->x / divisior;
+            res.y = this->y / divisior;
+            res.z = this->z / divisior;
+
+            return res;
+        }
     };
 
     inline static Barycentric

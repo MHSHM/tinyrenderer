@@ -39,14 +39,28 @@ int main()
     // light
     vec3 light_direction = vec3::vec3_new(0.0f, 0.0f, -1.0f);
 
+    // camera
+    vec3 cam_pos = vec3::vec3_new(0.0f, 0.0f, 0.0f);
+
     // create a mesh
     tiny::Mesh* mesh = tiny::mesh_new();
-    mesh->load(mesh, resource_manager, "../obj/african_head.obj");
-    mesh_rotate_y(mesh, 0.3 * mathy::PI);
-    mesh_scale(mesh, (width / 2.0f), (width / 2.0f), (width / 2.0f));
-    mesh_translate(mesh, (width / 2.0f), (width / 2.0f), (width / 2.0f));
-    // render the mesh
-    tiny::render_with_diffuse(mesh, image, zbuffer, light_direction, diffuse_texture);
+    mesh->load(mesh, resource_manager, "../obj/teapot.obj");
+
+    // model space
+    mesh_rotate_x(mesh, -mathy::PI * 0.5f);
+    mesh_scale(mesh, 0.06f, 0.06f, 0.06f);
+    mesh_translate(mesh, 0.0f, -0.5f, -1.5f);
+
+    // view space
+    mesh_translate(mesh, -cam_pos.x, -cam_pos.y, -cam_pos.z);
+
+    // perspective projection
+    mesh_z_division(mesh, 90.0f);
+
+    // raster space
+    mesh_scale(mesh, width / 2.0f, width / 2.0f, 1.0f);
+    mesh_translate(mesh, width / 2.0f, width / 2.0f, 0.0f);
+    tiny::render_per_pixel_shading(mesh, image, zbuffer, light_direction, white);
 
     // write the frame to the disk
     image->data->write_tga_file("output.tga");

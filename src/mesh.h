@@ -35,4 +35,9 @@ namespace tiny
     // the angle is in degrees
     void
     mesh_rotate_z(Mesh* mesh, float angle);
+
+    // performs a perspective projection
+    // fov is expected in degrees
+    void
+    mesh_z_division(Mesh* mesh, float fov);
 };
