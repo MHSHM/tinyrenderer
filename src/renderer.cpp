@@ -24,6 +24,13 @@ namespace tiny
         return (dot > 0.00001f);
     }
 
+    inline static bool
+    _is_triangle_too_close(const Triangle& triangle, float near_plane)
+    {
+        float avg_z = (triangle.data.v0.z + triangle.data.v1.z + triangle.data.v2.z) / 3.0f;
+        return (abs(avg_z) < near_plane);
+    }
+
     inline static TGAColor
     _triangle_flat_shade(const Triangle& triangle, const TGAColor& color, const vec3& light_direcrion)
     {
@@ -88,6 +95,9 @@ namespace tiny
     {
         for(auto& triangle: mesh->triangles)
         {
+            if(_is_triangle_too_close(triangle, 0.1f))
+                continue;
+
             tiny::Line line0 = tiny::line_new((int)triangle.data.v0.x, (int)triangle.data.v0.y, (int)triangle.data.v1.x, (int)triangle.data.v1.y);
             tiny::Line line1 = tiny::line_new((int)triangle.data.v0.x, (int)triangle.data.v0.y, (int)triangle.data.v2.x, (int)triangle.data.v2.y);
             tiny::Line line2 = tiny::line_new((int)triangle.data.v1.x, (int)triangle.data.v1.y, (int)triangle.data.v2.x, (int)triangle.data.v2.y);
@@ -103,6 +113,9 @@ namespace tiny
     {
         for(auto& triangle: mesh->triangles)
         {
+            if(_is_triangle_too_close(triangle, 0.1f))
+                continue;
+
             tiny::AABB aabb = tiny::aabb_new(triangle);
 
             for(int i = aabb.min_x; i <= aabb.max_x; ++i)
@@ -129,10 +142,8 @@ namespace tiny
     {
         for(auto& triangle: mesh->triangles)
         {
-            if(_triangle_is_backfacing(triangle, light_direction))
-            {
+            if(_is_triangle_too_close(triangle, 0.1f))
                 continue;
-            }
 
             TGAColor shaded_color = _triangle_flat_shade(triangle, color, light_direction);
 
@@ -167,10 +178,8 @@ namespace tiny
     {
         for(auto& triangle: mesh->triangles)
         {
-            //if(_triangle_is_backfacing(triangle, light_direction))
-            //{
-                //continue;
-            //}
+            if(_is_triangle_too_close(triangle, 0.1f))
+                continue;
 
             AABB aabb = aabb_new(triangle);
 
@@ -207,10 +216,8 @@ namespace tiny
     {
         for(auto& triangle: mesh->triangles)
         {
-            //if(_triangle_is_backfacing(triangle, light_direction))
-            //{
-                //continue;
-            //}
+            if(_is_triangle_too_close(triangle, 0.1f))
+                continue;
 
             AABB aabb = aabb_new(triangle);
 

@@ -31,13 +31,8 @@ int main()
     tiny::Zbuffer* zbuffer = tiny::zbuffer_new(width, height, -1e11f);
     resource_manager_add_resource(resource_manager, zbuffer, "z-buffer");
 
-    // diffuse texture
-    tiny::Image* diffuse_texture = tiny::image_new();
-    diffuse_texture->load(diffuse_texture, resource_manager, "../textures/african_head_diffuse.tga");
-    diffuse_texture->data->flip_vertically();
-
     // light
-    vec3 light_direction = vec3::vec3_new(0.0f, 0.0f, -1.0f);
+    vec3 light_direction = vec3::vec3_new(0.0, 0.0, -1.0);
 
     // camera
     vec3 cam_pos = vec3::vec3_new(0.0f, 0.0f, 0.0f);
@@ -60,7 +55,7 @@ int main()
     // raster space
     mesh_scale(mesh, width / 2.0f, width / 2.0f, 1.0f);
     mesh_translate(mesh, width / 2.0f, width / 2.0f, 0.0f);
-    tiny::render_per_pixel_shading(mesh, image, zbuffer, light_direction, white);
+    tiny::render_per_pixel_shading(mesh, image, zbuffer, light_direction, red);
 
     // write the frame to the disk
     image->data->write_tga_file("output.tga");
