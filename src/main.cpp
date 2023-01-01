@@ -39,7 +39,7 @@ int main()
 
     // create a mesh
     tiny::Mesh* mesh = tiny::mesh_new();
-    mesh->load(mesh, resource_manager, "../obj/teapot.obj");
+    mesh->load(mesh, resource_manager, "obj/teapot.obj");
 
     // model space
     mesh_rotate_x(mesh, -mathy::PI * 0.5f);

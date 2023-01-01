@@ -4,7 +4,7 @@
 #include "Math.h"
 #include "z-buffer.h"
 
-namespace tiny 
+namespace tiny
 {
     struct Triangle_Data
     {
@@ -20,7 +20,7 @@ namespace tiny
         mathy::Vector2<float> uv1;
         mathy::Vector2<float> uv2;
 
-        mathy::Vector3<float> face_normal;  
+        mathy::Vector3<float> face_normal;
     };
 
     struct Triangle

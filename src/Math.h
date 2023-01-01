@@ -1,7 +1,5 @@
 #pragma once
 
-#include "triangle.h"
-
 #include <math.h>
 #include <iostream>
 

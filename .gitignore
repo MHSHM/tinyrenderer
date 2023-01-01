@@ -3,3 +3,5 @@ bin/tinyrenderer.ilk
 bin/tinyrenderer.pdb
 .vscode/settings.json
 bin/output.tga
+/x64/Debug
+/.vs
