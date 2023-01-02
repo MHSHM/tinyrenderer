@@ -1,5 +1,8 @@
 #pragma once
 
+#include <glm/vec3.hpp>
+#include <glm/vec2.hpp>
+#include <glm/mat4x4.hpp>
 #include <math.h>
 #include <iostream>
 
@@ -13,190 +16,120 @@ namespace mathy
         bool is_inside;
     };
 
-    template<typename T>
-    struct Vector2
+    inline static glm::vec3
+    cross(const glm::vec3& a, const glm::vec3& b)
     {
-        T x, y;
+        float x = a.y * b.z - a.z * b.y;
+        float y = a.z * b.x - a.x * b.z;
+        float z = a.x * b.y - a.y * b.x;
 
-        static Vector2<T>
-        vec2_new(T x , T y)
-        {
-            Vector2<T> v;
-            v.x = x;
-            v.y = y;
-            return v;
-        }
+        glm::vec3 res;
+        res.x = x;
+        res.y = y;
+        res.z = z;
 
-        inline Vector2<T>
-        operator-(const Vector2<T>& other) const
-        {
-            Vector2<T> res = vec2_new(this->x - other.x, this->y - other.y);
-            return res;
-        }
+        return res;
+    }
 
-        inline static Vector2<T>
-        cross(Vector2<T> v1, Vector2<T> v2)
-        {
-
-        }
-
-        inline Vector2<T>
-        operator*(float scalar) const
-        {
-            Vector2<T> res;
-            res.x = this->x * scalar;
-            res.y = this->y * scalar;
-            return res;
-        }
-
-        inline Vector2<T>
-        operator+(const Vector2<T>& other) const
-        {
-            Vector2<T> res;
-            res.x = this->x + other.x;
-            res.y = this->y + other.y;
-            return res;
-        }
-    };
-
-    template<typename T>
-    struct Vector3
+    inline static float
+    dot(const glm::vec3& v0, const glm::vec3& v1)
     {
-        T x, y, z;
+        return v0.x * v1.x + v0.y * v1.y + v0.z * v1.z;
+    }
 
-        static Vector3<T>
-        vec3_new(T x , T y, T z)
-        {
-            Vector3<T> v;
-            v.x = x;
-            v.y = y;
-            v.z = z;
-            return v;
-        }
+    inline static float
+    magnitude(const glm::vec3& v)
+    {
+        float radicand = v.x * v.x + v.y * v.y + v.z * v.z;
+        return sqrt(radicand);
+    }
 
-        inline static Vector3<T>
-        cross(const Vector3<T>& a, const Vector3<T>& b)
-        {
-            T x = a.y * b.z - a.z * b.y;
-            T y = a.z * b.x - a.x * b.z;
-            T z = a.x * b.y - a.y * b.x;
+    inline static glm::vec3
+    normalize(const glm::vec3& v)
+    {
+        float v_mag = magnitude(v);
 
-            Vector3<T> res;
-            res.x = x;
-            res.y = y;
-            res.z = z;
+        glm::vec3 res;
+        res.x = v.x / (v_mag + 0.00001f);
+        res.y = v.y / (v_mag + 0.00001f);
+        res.z = v.z / (v_mag + 0.00001f);
 
-            return res;
-        }
+        return res;
+    }
 
-        inline static T
-        dot(const Vector3<T>& v0, const Vector3<T>& v1)
-        {
-            return v0.x * v1.x + v0.y * v1.y + v0.z * v1.z;
-        }
+    inline static float
+    to_radians(float angle_in_degrees)
+    {
+        return angle_in_degrees * (PI / 180.0f);
+    }
 
-        inline static float
-        magnitude(const Vector3<T>& v)
-        {
-            float radicand = v.x * v.x + v.y * v.y + v.z * v.z;
-            return sqrt(radicand);
-        }
+    inline static void
+    scale_mat(glm::mat4& mat, const glm::vec3& scale) 
+    {
+        mat[0][0] = scale.x;
+        mat[1][1] = scale.y;
+        mat[2][2] = scale.z;
+        mat[3][3] = 1.0f;
+    }
 
-        inline static Vector3<T>
-        normalize(const Vector3<T>& v)
-        {
-            float v_mag = magnitude(v);
+    inline static void
+    translation_mat(glm::mat4& mat, const glm::vec3& translation)
+    {
+        mat[3][0] = translation.x;
+        mat[3][1] = translation.y;
+        mat[3][2] = translation.z;
+    }
 
-            Vector3<T> res;
-            res.x = v.x / (v_mag + 0.00001f);
-            res.y = v.y / (v_mag + 0.00001f);
-            res.z = v.z / (v_mag + 0.00001f);
+    inline static void
+    rotate_x_mat(glm::mat4& mat, float angle) 
+    {
+        mat[1][1] = cosf(to_radians(angle));
+        mat[1][2] = sinf(to_radians(angle));
+        mat[2][1] = -mat[1][2];
+        mat[2][2] =  mat[1][1];
+    }
+ 
+    inline static void
+    rotate_y_mat(glm::mat4& mat, float angle) 
+    {
+        mat[0][0] = cosf(to_radians(angle));
+        mat[0][2] = sinf(to_radians(angle));
+        mat[2][0] = -mat[0][2];
+        mat[2][2] =  mat[0][0];
+    }
+ 
+    inline static void
+    rotate_z_mat(glm::mat4& mat, float angle)
+    {
+        mat[0][0] = cosf(to_radians(angle));
+        mat[0][1] = sinf(to_radians(angle));
+        mat[1][0] = -mat[0][2];
+        mat[1][1] =  mat[0][0];
+    }
 
-            return res;
-        }
+    // accepts only camera translation for the time being
+    inline static void
+    view_mat(glm::mat4& mat, const glm::vec3& translation) 
+    {
+        mat[3][0] = -translation.x;
+        mat[3][1] = -translation.y;
+        mat[3][2] = -translation.z;
+    }
 
-        inline Vector3<T>
-        operator-(const Vector3<T>& other) const
-        {
-            Vector3<T> res = vec3_new(this->x - other.x, this->y - other.y, this->z - other.z);
-            return res;
-        }
-
-        inline Vector3<T>
-        operator-() const
-        {
-            Vector3<T> res;
-            res.x = -this->x;
-            res.y = -this->y;
-            res.z = -this->z;
-
-            return res;
-        }
-
-        inline Vector3<T>
-        operator*(float scalar) const
-        {
-            Vector3<T> res;
-            res.x = this->x * scalar;
-            res.y = this->y * scalar;
-            res.z = this->z * scalar;
-            return res;
-        }
-
-        inline Vector3<T>
-        operator+(float scalar) const
-        {
-            Vector3<T> res;
-            res.x = this->x + scalar;
-            res.y = this->y + scalar;
-            res.z = this->z + scalar;
-            return res;
-        }
-
-        inline Vector3<T>
-        operator/(float divisior) const
-        {
-            Vector3<T> res;
-            res.x = this->x / divisior;
-            res.y = this->y / divisior;
-            res.z = this->z / divisior;
-            return res;
-        }
-
-        inline Vector3<T>
-        operator+(const Vector3<T>& other) const
-        {
-            Vector3<T> res;
-            res.x = this->x + other.x;
-            res.y = this->y + other.y;
-            res.z = this->z + other.z;
-            return res;
-        }
-
-        inline Vector3<T>
-        operator*(const Vector3<T>& other) const
-        {
-            Vector3<T> res;
-            res.x = this->x * other.x;
-            res.y = this->y * other.y;
-            res.z = this->z * other.z;
-            return res;
-        }
-
-        inline Vector3<T>
-        operator/(T divisior)
-        {
-            Vector3<T> res;
-            res.x = this->x / divisior;
-            res.y = this->y / divisior;
-            res.z = this->z / divisior;
-
-            return res;
-        }
-    };
+    inline static void
+    perspective_projection_mat(glm::mat4& mat, float n, float f, float fov)
+    {
+        float scalar = 1.0f / tanf(to_radians(fov / 2.0f));
+        mat[0][0] = scalar;
+        mat[1][1] = scalar;
+        mat[2][2] = -f / (f - n);
+        mat[3][2] = -1.0f;
+        mat[2][3] = -(f * n) / (f - n);
+        mat[3][3] = 0.0f;
+    }
 
     inline static Barycentric
-    is_inside_triangle(const Vector2<float>& pixel, const Vector3<float>& v0, const Vector3<float>& v1, const Vector3<float>& v2)
+    is_inside_triangle(const glm::vec2& pixel, const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2)
     {
         Barycentric coord;
         float denominator = ( (v1.y - v2.y) * (v0.x - v2.x) + (v2.x - v1.x) * (v0.y - v2.y) );
@@ -206,15 +139,4 @@ namespace mathy
         coord.is_inside = (coord.u >= 0.0f && coord.u <= 1.0f && coord.v >= 0.0f && coord.v <= 1.0f && coord.w >= 0.0f && coord.w <= 1.0f);
         return coord;
     }
-
-    inline static float
-    to_radians(float angle_in_degrees)
-    {
-        return angle_in_degrees * (PI / 180.0f);
-    }
-
-    typedef Vector3<float> vec3;
-    typedef Vector3<int> ivec3;
-    typedef Vector2<float> vec2;
-    typedef Vector2<int> ivec2;
 };

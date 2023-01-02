@@ -8,19 +8,19 @@ namespace tiny
 {
     struct Triangle_Data
     {
-        mathy::Vector3<float> v0;
-        mathy::Vector3<float> v1;
-        mathy::Vector3<float> v2;
+        glm::vec3 v0;
+        glm::vec3 v1;
+        glm::vec3 v2;
 
-        mathy::Vector3<float> n0;
-        mathy::Vector3<float> n1;
-        mathy::Vector3<float> n2;
+        glm::vec3 n0;
+        glm::vec3 n1;
+        glm::vec3 n2;
 
-        mathy::Vector2<float> uv0;
-        mathy::Vector2<float> uv1;
-        mathy::Vector2<float> uv2;
+        glm::vec2 uv0;
+        glm::vec2 uv1;
+        glm::vec2 uv2;
 
-        mathy::Vector3<float> face_normal;
+        glm::vec3 face_normal;
     };
 
     struct Triangle

@@ -8,9 +8,9 @@ namespace tiny
     {
         AABB aabb;
 
-        mathy::Vector2<int> pixel_0 = mathy::Vector2<int>::vec2_new((int)triangle.data.v0.x, (int)triangle.data.v0.y);
-        mathy::Vector2<int> pixel_1 = mathy::Vector2<int>::vec2_new((int)triangle.data.v1.x, (int)triangle.data.v1.y);
-        mathy::Vector2<int> pixel_2 = mathy::Vector2<int>::vec2_new((int)triangle.data.v2.x, (int)triangle.data.v2.y);
+        glm::ivec2 pixel_0 = glm::ivec2((int)triangle.data.v0.x, (int)triangle.data.v0.y);
+        glm::ivec2 pixel_1 = glm::ivec2((int)triangle.data.v1.x, (int)triangle.data.v1.y);
+        glm::ivec2 pixel_2 = glm::ivec2((int)triangle.data.v2.x, (int)triangle.data.v2.y);
 
         int min_x = std::min(pixel_0.x, (int)1e11);
         min_x = std::min(min_x, pixel_1.x);

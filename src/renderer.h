@@ -16,7 +16,7 @@ namespace tiny
     struct Zbuffer;
 
     void
-    render_point(const mathy::Vector3<float>& point, Image* image, const TGAColor& color);
+    render_point(const glm::vec3& point, Image* image, const TGAColor& color);
 
     void 
     render_line(const Line& line, Image* image, const TGAColor& color);
@@ -31,11 +31,11 @@ namespace tiny
     render_fill(const Mesh* mesh, Image* image, const TGAColor& color);
 
     void 
-    render_per_traingle_shading(const Mesh* mesh, Image* image, Zbuffer* zbuffer, const mathy::Vector3<float>& light_direction, const TGAColor& color);
+    render_per_traingle_shading(const Mesh* mesh, Image* image, Zbuffer* zbuffer, const glm::vec3& light_direction, const TGAColor& color);
 
     void
-    render_per_pixel_shading(const Mesh* mesh, Image* image, Zbuffer* zbuffer, const mathy::Vector3<float>& light_direction, const TGAColor& color);
+    render_per_pixel_shading(Mesh* mesh, Image* image, Zbuffer* zbuffer, const glm::vec3& light_direction, const glm::vec3& cam_pos, const TGAColor& color);
 
     void
-    render_with_diffuse(const Mesh* mesh, Image* image, tiny::Zbuffer* zbuffer, const mathy::Vector3<float>& light_direction, Image* diffuse);
+    render_with_diffuse(const Mesh* mesh, Image* image, tiny::Zbuffer* zbuffer, const glm::vec3& light_direction, Image* diffuse);
 };

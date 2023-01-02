@@ -3,6 +3,8 @@
 #include "AABB.h"
 #include "sampler.h"
 
+#include <glm/geometric.hpp>
+
 namespace tiny
 {
     Triangle
@@ -19,10 +21,10 @@ namespace tiny
         triangle.data.uv1 = data.uv1;
         triangle.data.uv2 = data.uv2;
 
-        mathy::Vector3<float> e0 = triangle.data.v1 - triangle.data.v0;
-        mathy::Vector3<float> e1 = triangle.data.v2 - triangle.data.v0;
-        triangle.data.face_normal = mathy::Vector3<float>::cross(e0, e1);
-        triangle.data.face_normal = mathy::Vector3<float>::normalize(triangle.data.face_normal);
+        glm::vec3 e0 = triangle.data.v1 - triangle.data.v0;
+        glm::vec3 e1 = triangle.data.v2 - triangle.data.v0;
+        triangle.data.face_normal = mathy::cross(e0, e1);
+        triangle.data.face_normal = mathy::normalize(triangle.data.face_normal);
 
         return triangle;
     }

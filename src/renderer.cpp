@@ -6,6 +6,8 @@
 #include "z-buffer.h"
 #include "sampler.h"
 
+#include <glm/geometric.hpp>
+
 using namespace mathy;
 
 namespace tiny
@@ -16,11 +18,10 @@ namespace tiny
         return x >= 0 && x < width && y >= 0 && y < height;
     }
 
-
     inline static bool
-    _triangle_is_backfacing(const Triangle& triangle, const vec3& light_direction)
+    _triangle_is_backfacing(const Triangle& triangle, const glm::vec3& light_direction)
     {
-        float dot = vec3::dot(triangle.data.face_normal, light_direction);
+        float dot = mathy::dot(triangle.data.face_normal, light_direction);
         return (dot > 0.00001f);
     }
 
@@ -32,7 +33,7 @@ namespace tiny
     }
 
     inline static TGAColor
-    _triangle_flat_shade(const Triangle& triangle, const TGAColor& color, const vec3& light_direcrion)
+    _triangle_flat_shade(const Triangle& triangle, const TGAColor& color, const glm::vec3& light_direcrion)
     {
         /*
             some notes for future me or anyone else intersted in reading my code
@@ -45,22 +46,22 @@ namespace tiny
             which means that our Z direction is coming out from the screen towards us.
         */
 
-        float dot = vec3::dot(triangle.data.face_normal, -light_direcrion);
+        float dot = mathy::dot(triangle.data.face_normal, -light_direcrion);
         TGAColor shaded_color = TGAColor(color.bgra[2] * dot, color.bgra[1] * dot, color.bgra[0] * dot);
 
         return shaded_color;
     }
 
     inline static TGAColor
-    _triangle_per_pixel_shading(const vec3& normal, const vec3& light_direction, const TGAColor& color)
+    _triangle_per_pixel_shading(const glm::vec3& normal, const glm::vec3& light_direction, const TGAColor& color)
     {
-        float dot = std::max(vec3::dot(normal, -light_direction), 0.0f);
+        float dot = std::max(mathy::dot(normal, -light_direction), 0.0f);
         TGAColor shaded_color = TGAColor(color.bgra[2] * dot, color.bgra[1] * dot, color.bgra[0] * dot);
         return shaded_color;
     }
 
     void
-    render_point(const vec3& point, Image* image, const TGAColor& color)
+    render_point(const glm::vec3& point, Image* image, const TGAColor& color)
     {
         image->data->set((int)point.x, (int)point.y, color);
     }
@@ -95,9 +96,6 @@ namespace tiny
     {
         for(auto& triangle: mesh->triangles)
         {
-            if(_is_triangle_too_close(triangle, 0.1f))
-                continue;
-
             tiny::Line line0 = tiny::line_new((int)triangle.data.v0.x, (int)triangle.data.v0.y, (int)triangle.data.v1.x, (int)triangle.data.v1.y);
             tiny::Line line1 = tiny::line_new((int)triangle.data.v0.x, (int)triangle.data.v0.y, (int)triangle.data.v2.x, (int)triangle.data.v2.y);
             tiny::Line line2 = tiny::line_new((int)triangle.data.v1.x, (int)triangle.data.v1.y, (int)triangle.data.v2.x, (int)triangle.data.v2.y);
@@ -113,9 +111,6 @@ namespace tiny
     {
         for(auto& triangle: mesh->triangles)
         {
-            if(_is_triangle_too_close(triangle, 0.1f))
-                continue;
-
             tiny::AABB aabb = tiny::aabb_new(triangle);
 
             for(int i = aabb.min_x; i <= aabb.max_x; ++i)
@@ -127,7 +122,7 @@ namespace tiny
                         continue;
                     }
 
-                    mathy::Vector2 pixel = vec2::vec2_new((float)i + 0.5f, (float)j + 0.5f);
+                    glm::vec2 pixel = glm::vec2((float)i + 0.5f, (float)j + 0.5f);
                     if(auto coord = mathy::is_inside_triangle(pixel, triangle.data.v0, triangle.data.v1, triangle.data.v2); coord.is_inside)
                     {
                         image->data->set(i, j, color);
@@ -138,13 +133,10 @@ namespace tiny
     }
 
     void
-    render_per_traingle_shading(const Mesh* mesh, Image* image, Zbuffer* zbuffer, const vec3& light_direction, const TGAColor& color)
+    render_per_traingle_shading(const Mesh* mesh, Image* image, Zbuffer* zbuffer, const glm::vec3& light_direction, const TGAColor& color)
     {
         for(auto& triangle: mesh->triangles)
         {
-            if(_is_triangle_too_close(triangle, 0.1f))
-                continue;
-
             TGAColor shaded_color = _triangle_flat_shade(triangle, color, light_direction);
 
             AABB aabb = aabb_new(triangle);
@@ -158,10 +150,10 @@ namespace tiny
                         continue;
                     }
 
-                    mathy::Vector2 pixel = vec2::vec2_new((float)i + 0.5f, (float)j + 0.5f);
+                    glm::vec2 pixel = glm::vec2((float)i + 0.5f, (float)j + 0.5f);
                     if(auto coord = mathy::is_inside_triangle(pixel, triangle.data.v0, triangle.data.v1, triangle.data.v2); coord.is_inside)
                     {
-                        mathy::Vector3<float> pixel_pos = triangle.data.v0 * coord.u + triangle.data.v1 * coord.v + triangle.data.v2 * coord.w;
+                        glm::vec3 pixel_pos = triangle.data.v0 * coord.u + triangle.data.v1 * coord.v + triangle.data.v2 * coord.w;
                         if(pixel_pos.z > zbuffer->depths[i * zbuffer->height + j])
                         {
                             image->data->set(i, j, shaded_color);
@@ -174,13 +166,54 @@ namespace tiny
     }
 
     void
-    render_per_pixel_shading(const Mesh* mesh, Image* image, Zbuffer* zbuffer, const vec3& light_direction, const TGAColor& color)
+    render_per_pixel_shading(Mesh* mesh, Image* image, Zbuffer* zbuffer, const glm::vec3& light_direction, const glm::vec3& cam_pos, const TGAColor& color)
     {
         for(auto& triangle: mesh->triangles)
         {
-            if(_is_triangle_too_close(triangle, 0.1f))
-                continue;
+            // perform different transformations
+            // model matrix
+            glm::mat4 rotate_x{ 1.0f }, scale{ 1.0f }, translate{ 1.0f };
+            mathy::rotate_x_mat(rotate_x, -90.0f);
+            mathy::scale_mat(scale, glm::vec3(0.05f, 0.05f, 0.05f));
+            mathy::translation_mat(translate, glm::vec3(0.0f, -0.5f, -20.5f));
+            glm::mat4 model_mat = translate * scale * rotate_x;
 
+            // view matrix
+            glm::mat4 view{ 1.0f };
+            mathy::view_mat(view, cam_pos);
+
+            // proj matrix
+            glm::mat4 proj{ 1.0f };
+            mathy::perspective_projection_mat(proj, 0.1f, 100.0f, 90.0f);
+
+            // model-view-proj transformation
+            glm::vec4 homogenous_v0 = proj * view * model_mat * glm::vec4(triangle.data.v0, 1.0f);
+            glm::vec4 homogenous_v1 = proj * view * model_mat * glm::vec4(triangle.data.v1, 1.0f);
+            glm::vec4 homogenous_v2 = proj * view * model_mat * glm::vec4(triangle.data.v2, 1.0f);
+
+            // homogenous to cartesian
+            triangle.data.v0 = glm::vec3(homogenous_v0) / homogenous_v0.w;
+            triangle.data.v1 = glm::vec3(homogenous_v1) / homogenous_v1.w;
+            triangle.data.v2 = glm::vec3(homogenous_v2) / homogenous_v2.w;
+
+            // TODO: this wrong will fix when implementing shaders
+            if (triangle.data.v0.x > 1.0f || triangle.data.v0.x < -1.0f || triangle.data.v0.y > 1.0f || triangle.data.v0.y < -1.0f) continue;
+            if (triangle.data.v1.x > 1.0f || triangle.data.v1.x < -1.0f || triangle.data.v1.y > 1.0f || triangle.data.v1.y < -1.0f) continue;
+            if (triangle.data.v2.x > 1.0f || triangle.data.v2.x < -1.0f || triangle.data.v2.y > 1.0f || triangle.data.v2.y < -1.0f) continue;
+
+            // viewport matrix
+            int viewport_w = image->data->width();
+            int viewport_h = image->data->height();
+            glm::mat4 viewport_scale{ 1.0f }, viewport_translate{ 1.0f };
+            mathy::scale_mat(viewport_scale, glm::vec3(viewport_w / 2.0f, viewport_h / 2.0f, 1.0f));
+            mathy::translation_mat(viewport_translate, glm::vec3(viewport_w / 2.0f, viewport_h / 2.0f, 0.0f));
+
+            // viewport tranformation
+            triangle.data.v0 = glm::vec3(viewport_translate * viewport_scale * glm::vec4(triangle.data.v0, 1.0f));
+            triangle.data.v1 = glm::vec3(viewport_translate * viewport_scale * glm::vec4(triangle.data.v1, 1.0f));
+            triangle.data.v2 = glm::vec3(viewport_translate * viewport_scale * glm::vec4(triangle.data.v2, 1.0f));
+
+            // rasterization
             AABB aabb = aabb_new(triangle);
 
             for(int i = aabb.min_x; i <= aabb.max_x; ++i)
@@ -192,16 +225,16 @@ namespace tiny
                         continue;
                     }
 
-                    mathy::Vector2 pixel = vec2::vec2_new((float)i + 0.5f, (float)j + 0.5f);
+                    glm::vec2 pixel = glm::vec2((float)i + 0.5f, (float)j + 0.5f);
                     if(auto coord = mathy::is_inside_triangle(pixel, triangle.data.v0, triangle.data.v1, triangle.data.v2); coord.is_inside)
                     {
-                        vec3 pixel_normal = triangle.data.n0 * coord.u + triangle.data.n1 * coord.v + triangle.data.n2 * coord.w;
-                        vec3 pixel_pos    = triangle.data.v0 * coord.u + triangle.data.v1 * coord.v + triangle.data.v2 * coord.w;
-                        vec2 pixel_uv     = triangle.data.uv0 * coord.u + triangle.data.uv1 * coord.v + triangle.data.uv2 * coord.w;
+                        glm::vec3 pixel_normal = triangle.data.n0 * coord.u + triangle.data.n1 * coord.v + triangle.data.n2 * coord.w;
+                        glm::vec3 pixel_pos    = triangle.data.v0 * coord.u + triangle.data.v1 * coord.v + triangle.data.v2 * coord.w;
+                        glm::vec2 pixel_uv     = triangle.data.uv0 * coord.u + triangle.data.uv1 * coord.v + triangle.data.uv2 * coord.w;
                         // depth test
                         if(pixel_pos.z > zbuffer->depths[i * zbuffer->height + j])
                         {
-                            TGAColor shaded_color = _triangle_per_pixel_shading(vec3::normalize(pixel_normal), light_direction, color);
+                            TGAColor shaded_color = _triangle_per_pixel_shading(glm::normalize(pixel_normal), light_direction, color);
                             image->data->set(i, j, shaded_color);
                             zbuffer->depths[i * zbuffer->height + j] = pixel_pos.z;
                         }
@@ -212,13 +245,10 @@ namespace tiny
     }
 
     void
-    render_with_diffuse(const Mesh* mesh, Image* image, tiny::Zbuffer* zbuffer, const vec3& light_direction, Image* diffuse)
+    render_with_diffuse(const Mesh* mesh, Image* image, tiny::Zbuffer* zbuffer, const glm::vec3& light_direction, Image* diffuse)
     {
         for(auto& triangle: mesh->triangles)
         {
-            if(_is_triangle_too_close(triangle, 0.1f))
-                continue;
-
             AABB aabb = aabb_new(triangle);
 
             for(int i = aabb.min_x; i <= aabb.max_x; ++i)
@@ -230,17 +260,17 @@ namespace tiny
                         continue;
                     }
 
-                    mathy::Vector2 pixel =vec2::vec2_new((float)i + 0.5f, (float)j + 0.5f);
+                    glm::vec2 pixel = glm::vec2((float)i + 0.5f, (float)j + 0.5f);
                     if(auto coord = mathy::is_inside_triangle(pixel, triangle.data.v0, triangle.data.v1, triangle.data.v2); coord.is_inside)
                     {
-                        vec3 pixel_normal = triangle.data.n0 * coord.u + triangle.data.n1 * coord.v + triangle.data.n2 * coord.w;
-                        vec3 pixel_pos    = triangle.data.v0 * coord.u + triangle.data.v1 * coord.v + triangle.data.v2 * coord.w;
-                        vec2 pixel_uv     = triangle.data.uv0 * coord.u + triangle.data.uv1 * coord.v + triangle.data.uv2 * coord.w;
+                        glm::vec3 pixel_normal = triangle.data.n0 * coord.u + triangle.data.n1 * coord.v + triangle.data.n2 * coord.w;
+                        glm::vec3 pixel_pos    = triangle.data.v0 * coord.u + triangle.data.v1 * coord.v + triangle.data.v2 * coord.w;
+                        glm::vec2 pixel_uv     = triangle.data.uv0 * coord.u + triangle.data.uv1 * coord.v + triangle.data.uv2 * coord.w;
 
                         // depth test
                         if(pixel_pos.z > zbuffer->depths[i * zbuffer->height + j])
                         {
-                            TGAColor shaded_color = _triangle_per_pixel_shading(vec3::normalize(pixel_normal),
+                            TGAColor shaded_color = _triangle_per_pixel_shading(glm::normalize(pixel_normal),
                                                     light_direction,
                                                     sample(diffuse, pixel_uv.x, pixel_uv.y));
                             image->data->set(i, j, shaded_color);
