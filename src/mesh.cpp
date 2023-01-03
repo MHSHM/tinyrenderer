@@ -13,7 +13,7 @@ namespace tiny
 
         Mesh* mesh = (Mesh*)resource;
         mesh->triangles.resize(loader.LoadedIndices.size() / 3);
-        for(int i = 0, triangle_index = 0; i < loader.LoadedIndices.size(); i+=3, triangle_index++)
+        for (int i = 0, triangle_index = 0; i < loader.LoadedIndices.size(); i += 3, triangle_index++)
         {
             tiny::Triangle_Data data;
             const std::vector<objl::Vertex>& vertices = loader.LoadedVertices;
@@ -32,8 +32,6 @@ namespace tiny
 
             mesh->triangles[triangle_index] = tiny::triangle_new(data);
         }
-
-        resource_manager_add_resource(resource_manager, resource, path);
     }
 
     inline static void
@@ -45,11 +43,12 @@ namespace tiny
     }
 
     Mesh*
-    mesh_new()
+    mesh_new(Resource_Manager* resource_manager, const std::string& tag)
     {
         Mesh* mesh = new Mesh;
         mesh->load = &_load_mesh;
         mesh->free   = &_free_mesh;
+        resource_manager_add_resource(resource_manager, mesh, tag);
         return mesh;
     }
 };

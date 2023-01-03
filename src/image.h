@@ -13,8 +13,8 @@ namespace tiny
     };
 
     Image*
-    image_new(int width, int height, TGAImage::Format format);
+    image_new(Resource_Manager* resource_manager, const std::string& tag, int width, int height, TGAImage::Format format);
 
     Image*
-    image_new();
+    image_new(Resource_Manager* resource_manager, const std::string& tag);
 };

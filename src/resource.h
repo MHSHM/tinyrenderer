@@ -24,14 +24,7 @@ resource_manager_new()
 inline static void
 resource_manager_free(Resource_Manager* resource_manager)
 {
-    for(auto& [_, resource]: resource_manager->resources_map)
-    {
-        if(resource)
-        {
-             delete resource;
-             resource = nullptr;
-        }
-    }
+    // TODO/FIX: find a way to remove and free all resources
 }
 
 inline static void
@@ -43,5 +36,5 @@ resource_manager_add_resource(Resource_Manager* resource_manager, Resource* reso
 inline static void
 resource_manager_remove_resource(Resource_Manager* resource_manager, Resource* resource, const std::string& tag)
 {
-    resource_manager->resources_map.erase(tag);
+    auto next_iter = resource_manager->resources_map.erase(tag);
 }
