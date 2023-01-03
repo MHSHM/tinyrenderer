@@ -61,4 +61,7 @@ namespace tiny
 
 	Shader*
 	shader_diffuse_new(Resource_Manager* resource_manager, const std::string& tag);
+
+	Shader*
+	shader_wireframe_new(Resource_Manager* resource_manager, const std::string& tag);
 };

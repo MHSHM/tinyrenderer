@@ -47,6 +47,7 @@ int main()
     // create shader
     tiny::Shader* shader_lit = tiny::shader_lit_new(resource_manager, "shader lit");
     tiny::Shader* shader_diffuse = tiny::shader_diffuse_new(resource_manager, "shader diffuse");
+    tiny::Shader* shader_wireframe = tiny::shader_wireframe_new(resource_manager, "shader wireframe");
 
     // set shaders uniforms
     // TODO: find a better way to set uniforms
@@ -62,11 +63,14 @@ int main()
 
     tiny::shader_set_uniform(shader_lit, "cam_pos", cam_uniform);
     tiny::shader_set_uniform(shader_lit, "light_direction", light_uniform);
+
     tiny::shader_set_uniform(shader_diffuse, "cam_pos", cam_uniform);
     tiny::shader_set_uniform(shader_diffuse, "light_direction", light_uniform);
     tiny::shader_set_uniform(shader_diffuse, "diffuse_texture", diffuse_texture_uniform);
 
-    tiny::render_with_diffuse(mesh, image, zbuffer, shader_diffuse);
+    tiny::shader_set_uniform(shader_wireframe, "cam_pos", cam_uniform);
+
+    tiny::render_wireframe(mesh, image, shader_wireframe, white);
 
     // write the frame to the disk
     image->data->write_tga_file("output.tga");

@@ -20,25 +20,8 @@ namespace tiny
         return (dot > 0.00001f);
     }
 
-    void
-    render_point(const glm::vec3& point, Image* image, const TGAColor& color)
-    {
-        image->data->set((int)point.x, (int)point.y, color);
-    }
-
-    void
-    render_mesh_as_points(const Mesh* mesh, Image* image, const TGAColor& color)
-    {
-        for (auto& triangle : mesh->triangles)
-        {
-            render_point(triangle.data.v0, image, color);
-            render_point(triangle.data.v1, image, color);
-            render_point(triangle.data.v2, image, color);
-        }
-    }
-
-    void
-    render_line(const Line& line, Image* image, const TGAColor& color)
+    inline static void
+    _render_line(const Line& line, Image* image, const TGAColor& color)
     {
         int dx = std::abs(line.x1 - line.x0);
         int dy = std::abs(line.y1 - line.y0);
@@ -52,17 +35,39 @@ namespace tiny
     }
 
     void
-    render_wireframe(const Mesh* mesh, Image* image, const TGAColor& color)
+    render_wireframe(Mesh* mesh, Image* image, Shader* shader, const TGAColor& color)
     {
         for (auto& triangle : mesh->triangles)
         {
+            // run vertex shader on all triangles
+            shader->vertex_shader(shader, triangle);
+
+            // if a single vertex of the triangle's 3 vertices is outside of the
+            // projection plane CLIP the whole triangle. Why doing this? well..
+            // too lazy to implement a sophisticated clipping algorithm
+            if (triangle.data.v0.x > 1.0f || triangle.data.v0.x < -1.0f || triangle.data.v0.y > 1.0f || triangle.data.v0.y < -1.0f) continue;
+            if (triangle.data.v1.x > 1.0f || triangle.data.v1.x < -1.0f || triangle.data.v1.y > 1.0f || triangle.data.v1.y < -1.0f) continue;
+            if (triangle.data.v2.x > 1.0f || triangle.data.v2.x < -1.0f || triangle.data.v2.y > 1.0f || triangle.data.v2.y < -1.0f) continue;
+
+            // convert to viewport space
+            int viewport_w = image->data->width();
+            int viewport_h = image->data->height();
+            glm::mat4 viewport_scale{ 1.0f }, viewport_translate{ 1.0f };
+            mathy::scale_mat(viewport_scale, glm::vec3(viewport_w / 2.0f, viewport_h / 2.0f, 1.0f));
+            mathy::translation_mat(viewport_translate, glm::vec3(viewport_w / 2.0f, viewport_h / 2.0f, 0.0f));
+
+            // viewport tranformation
+            triangle.data.v0 = glm::vec3(viewport_translate * viewport_scale * glm::vec4(triangle.data.v0, 1.0f));
+            triangle.data.v1 = glm::vec3(viewport_translate * viewport_scale * glm::vec4(triangle.data.v1, 1.0f));
+            triangle.data.v2 = glm::vec3(viewport_translate * viewport_scale * glm::vec4(triangle.data.v2, 1.0f));
+
             tiny::Line line0 = tiny::line_new((int)triangle.data.v0.x, (int)triangle.data.v0.y, (int)triangle.data.v1.x, (int)triangle.data.v1.y);
             tiny::Line line1 = tiny::line_new((int)triangle.data.v0.x, (int)triangle.data.v0.y, (int)triangle.data.v2.x, (int)triangle.data.v2.y);
             tiny::Line line2 = tiny::line_new((int)triangle.data.v1.x, (int)triangle.data.v1.y, (int)triangle.data.v2.x, (int)triangle.data.v2.y);
 
-            render_line(line0, image, color);
-            render_line(line1, image, color);
-            render_line(line2, image, color);
+            _render_line(line0, image, color);
+            _render_line(line1, image, color);
+            _render_line(line2, image, color);
         }
     }
 

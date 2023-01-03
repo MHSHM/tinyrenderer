@@ -18,6 +18,12 @@ namespace tiny
         resource_manager_remove_resource(resources_manager, shader, tag);
 	}
 
+    inline static TGAColor
+    _empty_fragment_shader(Shader* shader, glm::vec3 normal, const TGAColor& color)
+    {
+        return {};
+    }
+
 	inline static void
 	_lit_vertex_shader(Shader* shader, tiny::Triangle& triangle)
 	{
@@ -88,6 +94,18 @@ namespace tiny
         shader->free = &_free;
         shader->vertex_shader = &_lit_vertex_shader;
         shader->fragment_shader = &_lit_fragment_shader;
+        resource_manager_add_resource(resource_manager, shader, tag);
+        return shader;
+    }
+
+    Shader*
+    shader_wireframe_new(Resource_Manager* resource_manager, const std::string& tag) 
+    {
+        Shader* shader = new Shader;
+        shader->load = &_load;
+        shader->free = &_free;
+        shader->vertex_shader = &_lit_vertex_shader;
+        shader->fragment_shader = &_empty_fragment_shader;
         resource_manager_add_resource(resource_manager, shader, tag);
         return shader;
     }
