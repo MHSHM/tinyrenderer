@@ -78,6 +78,7 @@ namespace mathy
         mat[3][0] = translation.x;
         mat[3][1] = translation.y;
         mat[3][2] = translation.z;
+        mat[3][3] = 1.0f;
     }
 
     inline static void
@@ -122,9 +123,9 @@ namespace mathy
         float scalar = 1.0f / tanf(to_radians(fov / 2.0f));
         mat[0][0] = scalar;
         mat[1][1] = scalar;
-        mat[2][2] = -f / (f - n);
-        mat[3][2] = -1.0f;
-        mat[2][3] = -(f * n) / (f - n);
+        mat[2][2] = -1.0f;
+        mat[2][3] = -1.0f;
+        mat[3][2] = 0.0f;
         mat[3][3] = 0.0f;
     }
 

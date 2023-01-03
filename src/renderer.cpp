@@ -172,11 +172,10 @@ namespace tiny
         {
             // perform different transformations
             // model matrix
-            glm::mat4 rotate_x{ 1.0f }, scale{ 1.0f }, translate{ 1.0f };
-            mathy::rotate_x_mat(rotate_x, -90.0f);
-            mathy::scale_mat(scale, glm::vec3(0.05f, 0.05f, 0.05f));
-            mathy::translation_mat(translate, glm::vec3(0.0f, -0.5f, -20.5f));
-            glm::mat4 model_mat = translate * scale * rotate_x;
+            glm::mat4 rotate_y{ 1.0f }, scale{ 1.0f }, translate{ 1.0f };
+            mathy::scale_mat(scale, glm::vec3(1.87f, 1.87f, 1.87f));
+            mathy::translation_mat(translate, glm::vec3(0.0f, -0.5f, -3.5f));
+            glm::mat4 model_mat = translate * scale * rotate_y;
 
             // view matrix
             glm::mat4 view{ 1.0f };
@@ -192,9 +191,16 @@ namespace tiny
             glm::vec4 homogenous_v2 = proj * view * model_mat * glm::vec4(triangle.data.v2, 1.0f);
 
             // homogenous to cartesian
+            // TODO: fix this nonsense
+            float z0 = triangle.data.v0.z;
+            float z1 = triangle.data.v1.z;
+            float z2 = triangle.data.v2.z;
             triangle.data.v0 = glm::vec3(homogenous_v0) / homogenous_v0.w;
             triangle.data.v1 = glm::vec3(homogenous_v1) / homogenous_v1.w;
             triangle.data.v2 = glm::vec3(homogenous_v2) / homogenous_v2.w;
+            triangle.data.v0.z = z0;
+            triangle.data.v1.z = z1;
+            triangle.data.v2.z = z2;
 
             // TODO: this wrong will fix when implementing shaders
             if (triangle.data.v0.x > 1.0f || triangle.data.v0.x < -1.0f || triangle.data.v0.y > 1.0f || triangle.data.v0.y < -1.0f) continue;

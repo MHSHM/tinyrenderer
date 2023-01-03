@@ -39,7 +39,7 @@ int main()
 
     // create a mesh
     tiny::Mesh* mesh = tiny::mesh_new();
-    mesh->load(mesh, resource_manager, "obj/teapot.obj");
+    mesh->load(mesh, resource_manager, "obj/african_head.obj");
 
     tiny::render_per_pixel_shading(mesh, image, zbuffer, light_direction, cam_pos, white);
 
